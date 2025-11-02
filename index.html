@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="图片搜索工具">
+    <title>图片搜索工具 - 手机版</title>
+    <style>
+        /* 全局样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 15px;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        /* 头部样式 */
+        .header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* 搜索区域 */
+        .search-section {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .search-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .btn:active {
+            transform: scale(0.96);
+        }
+        
+        /* 状态信息 */
+        .status-section {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .status-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .status-badge {
+            background: #e8f4fc;
+            color: #3498db;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        /* 图片结果区域 */
+        .results-section {
+            padding: 20px;
+            min-height: 200px;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .image-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .image-card:active {
+            transform: scale(0.95);
+        }
+        
+        .image-placeholder {
+            width: 100%;
+            height: 120px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .image-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: none;
+        }
+        
+        .image-info {
+            padding: 12px;
+        }
+        
+        .image-code {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+            color: #2c3e50;
+        }
+        
+        .image-desc {
+            font-size: 12px;
+            color: #7f8c8d;
+            line-height: 1.4;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+        
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 8px;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 30px;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 480px) {
+            .results-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .search-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                min-width: auto;
+            }
+        }
+        
+        /* 添加到主屏幕提示 */
+        .install-prompt {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            display: none;
+        }
+        
+        .install-prompt p {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .install-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 添加到主屏幕提示 -->
+        <div class="install-prompt" id="installPrompt">
+            <p>📱 点击分享按钮，选择"添加到主屏幕"获得更好体验</p>
+            <button class="install-close" onclick="closeInstallPrompt()">知道了</button>
+        </div>
+        
+        <!-- 头部 -->
+        <div class="header">
+            <h1>📷 图片搜索工具</h1>
+            <p>快速搜索和浏览产品图片</p>
+        </div>
+        
+        <!-- 搜索区域 -->
+        <div class="search-section">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 输入图片代码、描述或标签进行搜索...">
+            <div class="search-buttons">
+                <button class="btn btn-primary" onclick="searchImages()">搜索图片</button>
+                <button class="btn btn-secondary" onclick="checkUpdate()">检查更新</button>
+                <button class="btn btn-success" onclick="toggleAutoUpdate()" id="autoUpdateBtn">开启自动更新</button>
+            </div>
+        </div>
+        
+        <!-- 状态信息 -->
+        <div class="status-section">
+            <div class="status-info">
+                <span id="statusText">准备就绪</span>
+                <span class="status-badge" id="imageCount">0张图片</span>
+            </div>
+        </div>
+        
+        <!-- 图片结果区域 -->
+        <div class="results-section" id="resultsSection">
+            <div class="empty-state">
+                <div class="icon">📁</div>
+                <h3>暂无图片显示</h3>
+                <p>在搜索框中输入关键词来查找图片</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 图片预览模态框 -->
+    <div class="modal" id="imageModal">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script>
+        // 配置信息
+        const CONFIG = {
+            GITHUB_URL: 'https://raw.githubusercontent.com/iptv369/image-database/refs/heads/main/images.json',
+            AUTO_UPDATE_INTERVAL: 30 * 60 * 1000, // 30分钟
+            VERSION: '1.0.0'
+        };
+        
+        // 全局变量
+        let imageData = [];
+        let autoUpdateInterval = null;
+        let isAutoUpdate = false;
+        let loadedImages = {};
+        let deferredPrompt = null;
+        
+        // 初始化
+        async function initialize() {
+            updateStatus('正在加载数据...', 'loading');
+            
+            try {
+                // 尝试从本地存储加载数据
+                const cachedData = localStorage.getItem('imageData');
+                const cacheTime = localStorage.getItem('cacheTime');
+                const isCacheValid = cacheTime && (Date.now() - parseInt(cacheTime)) < 24 * 60 * 60 * 1000; // 24小时缓存
+                
+                if (cachedData && isCacheValid) {
+                    imageData = JSON.parse(cachedData);
+                    updateImageCount();
+                    updateStatus('数据加载成功（本地缓存）', 'success');
+                    showEmptyState();
+                } else {
+                    // 从GitHub加载数据
+                    await loadFromGitHub();
+                }
+                
+                // 显示安装提示（如果是iOS Safari）
+                if (isIosSafari()) {
+                    showInstallPrompt();
+                }
+                
+            } catch (error) {
+                console.error('初始化失败:', error);
+                updateStatus('数据加载失败', 'error');
+            }
+        }
+        
+        // 从GitHub加载数据
+        async function loadFromGitHub() {
+            try {
+                updateStatus('正在从云端获取数据...', 'loading');
+                
+                const response = await fetch(CONFIG.GITHUB_URL + '?t=' + Date.now());
+                
+                if (!response.ok) {
+                    throw new Error('网络请求失败: ' + response.status);
+                }
+                
+                imageData = await response.json();
+                
+                // 缓存数据
+                localStorage.setItem('imageData', JSON.stringify(imageData));
+                localStorage.setItem('cacheTime', Date.now().toString());
+                
+                updateImageCount();
+                updateStatus('数据同步成功', 'success');
+                showEmptyState();
+                
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                updateStatus('云端数据加载失败', 'error');
+                
+                // 如果本地有缓存数据，使用缓存
+                const cachedData = localStorage.getItem('imageData');
+                if (cachedData) {
+                    imageData = JSON.parse(cachedData);
+                    updateImageCount();
+                    updateStatus('使用本地缓存数据', 'warning');
+                    showEmptyState();
+                }
+            }
+        }
+        
+        // 搜索图片
+        function searchImages() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            
+            if (!query) {
+                showEmptyState();
+                return;
+            }
+            
+            const results = imageData.filter(img => 
+                img.code.toLowerCase().includes(query) || 
+                (img.description && img.description.toLowerCase().includes(query)) ||
+                (img.tags && img.tags.some(tag => tag.toLowerCase().includes(query)))
+            );
+            
+            displayResults(results);
+        }
+        
+        // 显示搜索结果
+        function displayResults(results) {
+            const resultsSection = document.getElementById('resultsSection');
+            
+            if (results.length === 0) {
+                resultsSection.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🔍</div>
+                        <h3>没有找到匹配的图片</h3>
+                        <p>尝试使用其他关键词搜索</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            resultsSection.innerHTML = `
+                <div class="results-grid">
+                    ${results.map(img => `
+                        <div class="image-card" onclick="openModal('${img.url}')">
+                            <div class="image-placeholder">加载中...</div>
+                            <img src="${img.url}" alt="${img.code}" 
+                                 onload="imageLoaded('${img.url}')" 
+                                 onerror="imageError('${img.url}')">
+                            <div class="image-info">
+                                <div class="image-code">${img.code}</div>
+                                <div class="image-desc">${img.description || ''}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            // 开始加载图片
+            results.forEach(img => {
+                if (!loadedImages[img.url]) {
+                    const imgElement = new Image();
+                    imgElement.src = img.url;
+                    loadedImages[img.url] = imgElement;
+                }
+            });
+        }
+        
+        // 图片加载完成
+        function imageLoaded(url) {
+            const card = document.querySelector(`img[src="${url}"]`).parentNode;
+            const placeholder = card.querySelector('.image-placeholder');
+            const img = card.querySelector('img');
+            
+            placeholder.style.display = 'none';
+            img.style.display = 'block';
+        }
+        
+        // 图片加载失败
+        function imageError(url) {
+            const card = document.querySelector(`img[src="${url}"]`).parentNode;
+            const placeholder = card.querySelector('.image-placeholder');
+            
+            placeholder.textContent = '加载失败';
+            placeholder.style.background = '#ffebee';
+            placeholder.style.color = '#c62828';
+        }
+        
+        // 检查更新
+        async function checkUpdate() {
+            try {
+                updateStatus('检查更新中...', 'loading');
+                
+                const response = await fetch(CONFIG.GITHUB_URL + '?t=' + Date.now());
+                
+                if (response.ok) {
+                    const cloudData = await response.json();
+                    const localCount = imageData.length;
+                    const cloudCount = cloudData.length;
+                    
+                    if (cloudCount > localCount) {
+                        imageData = cloudData;
+                        localStorage.setItem('imageData', JSON.stringify(imageData));
+                        localStorage.setItem('cacheTime', Date.now().toString());
+                        
+                        updateImageCount();
+                        updateStatus(`已更新！新增 ${cloudCount - localCount} 张图片`, 'success');
+                        
+                        // 如果当前有搜索结果，刷新显示
+                        const query = document.getElementById('searchInput').value.trim();
+                        if (query) {
+                            searchImages();
+                        }
+                    } else {
+                        updateStatus('已是最新版本', 'success');
+                    }
+                } else {
+                    throw new Error('服务器错误: ' + response.status);
+                }
+            } catch (error) {
+                console.error('更新失败:', error);
+                updateStatus('更新失败', 'error');
+            }
+        }
+        
+        // 切换自动更新
+        function toggleAutoUpdate() {
+            const btn = document.getElementById('autoUpdateBtn');
+            
+            if (isAutoUpdate) {
+                clearInterval(autoUpdateInterval);
+                btn.textContent = '开启自动更新';
+                isAutoUpdate = false;
+                updateStatus('已关闭自动更新', 'warning');
+            } else {
+                autoUpdateInterval = setInterval(checkUpdate, CONFIG.AUTO_UPDATE_INTERVAL);
+                btn.textContent = '关闭自动更新';
+                isAutoUpdate = true;
+                updateStatus('已开启自动更新（30分钟检查一次）', 'success');
+            }
+        }
+        
+        // 打开图片模态框
+        function openModal(imageUrl) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            
+            modalImg.src = imageUrl;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // 更新状态
+        function updateStatus(message, type = '') {
+            const statusElement = document.getElementById('statusText');
+            statusElement.innerHTML = message;
+            
+            // 根据类型添加图标
+            if (type === 'loading') {
+                statusElement.innerHTML = `<span class="loading"></span>${message}`;
+            } else if (type === 'success') {
+                statusElement.innerHTML = `✅ ${message}`;
+            } else if (type === 'error') {
+                statusElement.innerHTML = `❌ ${message}`;
+            } else if (type === 'warning') {
+                statusElement.innerHTML = `⚠️ ${message}`;
+            }
+        }
+        
+        // 更新图片数量显示
+        function updateImageCount() {
+            document.getElementById('imageCount').textContent = `${imageData.length}张图片`;
+        }
+        
+        // 显示空状态
+        function showEmptyState() {
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.innerHTML = `
+                <div class="empty-state">
+                    <div class="icon">📁</div>
+                    <h3>共 ${imageData.length} 张图片</h3>
+                    <p>在搜索框中输入关键词来查找图片</p>
+                </div>
+            `;
+        }
+        
+        // 显示安装提示
+        function showInstallPrompt() {
+            const prompt = document.getElementById('installPrompt');
+            prompt.style.display = 'block';
+        }
+        
+        // 关闭安装提示
+        function closeInstallPrompt() {
+            const prompt = document.getElementById('installPrompt');
+            prompt.style.display = 'none';
+        }
+        
+        // 检测是否为iOS Safari
+        function isIosSafari() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
+        
+        // 事件监听
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchImages();
+            }
+        });
+        
+        // 点击模态框外部关闭
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // 触摸优化
+        document.addEventListener('touchstart', function() {}, { passive: true });
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initialize);
+    </script>
+</body>
+</html>
