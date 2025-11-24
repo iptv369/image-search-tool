@@ -375,12 +375,12 @@
         // 视频源列表
         const videoSources = [
             {
-                url: "http://v.nrzj.vip/video.php",
+                url: "https://v.nrzj.vip/video.php",
                 name: "源1",
                 desc: "nrzj.vip"
             },
             {
-                url: "http://av.npcq.cn/api.php",
+                url: "https://av.npcq.cn/api.php",
                 name: "源2", 
                 desc: "npcq.cn"
             }
@@ -474,6 +474,9 @@
         
         // 手势控制 - 触摸开始
         playerContainer.addEventListener('touchstart', function(e) {
+            // 防止点击视频本身触发切换
+            if (e.target === videoPlayer) return;
+            
             startY = e.touches[0].clientY;
             isSwiping = true;
         }, { passive: true });
@@ -497,6 +500,11 @@
             
             isSwiping = false;
         }, { passive: true });
+        
+        // 防止点击视频本身触发任何切换操作
+        videoPlayer.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
         
         // 初始化加载第一个视频
         nextVideo();
