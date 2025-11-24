@@ -21,18 +21,27 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            touch-action: pan-y;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
         }
         
         .container {
             width: 100%;
             max-width: 500px;
-            margin: 0 auto;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 20px;
         }
         
         .header {
             text-align: center;
             margin-bottom: 25px;
+            flex-shrink: 0;
         }
         
         .header h1 {
@@ -59,6 +68,7 @@
             border-radius: 14px;
             padding: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
         }
         
         .source-btn {
@@ -124,13 +134,16 @@
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
             margin-bottom: 20px;
             background: #000;
+            flex-shrink: 0;
+            aspect-ratio: 16/9;
         }
         
         #videoPlayer {
             width: 100%;
-            height: auto;
+            height: 100%;
             display: block;
             background: #000;
+            object-fit: contain;
         }
         
         .loading {
@@ -184,6 +197,7 @@
             gap: 12px;
             margin-top: 20px;
             width: 100%;
+            flex-shrink: 0;
         }
         
         .control-btn {
@@ -223,6 +237,7 @@
             line-height: 1.6;
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
         }
         
         .info h3 {
@@ -251,6 +266,7 @@
             text-align: center;
             font-size: 13px;
             opacity: 0.6;
+            flex-shrink: 0;
         }
         
         .swipe-indicator {
@@ -278,6 +294,26 @@
             margin-top: 15px;
             font-size: 13px;
             opacity: 0.7;
+            flex-shrink: 0;
+        }
+        
+        /* 滚动条样式 */
+        .container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+        
+        .container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+        
+        .container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
         
         @media (max-width: 480px) {
@@ -356,7 +392,7 @@
         </div>
         
         <div class="footer">
-            <p>随机视频播放器 &copy; 2023 | 设计优化版</p>
+            <p>随机视频播放器 &copy; 2023 | 全屏固定版</p>
         </div>
     </div>
 
@@ -375,12 +411,12 @@
         // 视频源列表
         const videoSources = [
             {
-                url: "https://v.nrzj.vip/video.php",
+                url: "http://v.nrzj.vip/video.php",
                 name: "源1",
                 desc: "nrzj.vip"
             },
             {
-                url: "https://av.npcq.cn/api.php",
+                url: "http://av.npcq.cn/api.php",
                 name: "源2", 
                 desc: "npcq.cn"
             }
@@ -394,6 +430,14 @@
         let startY = 0;
         let endY = 0;
         let isSwiping = false;
+
+        // 防止页面滚动
+        document.body.addEventListener('touchmove', function(e) {
+            // 只有在播放器区域才允许滑动切换视频
+            if (!e.target.closest('.player-container')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
         
         // 视频加载开始时的处理
         videoPlayer.onloadstart = videoPlayer.onwaiting = function() {
@@ -485,7 +529,10 @@
         playerContainer.addEventListener('touchmove', function(e) {
             if (!isSwiping) return;
             endY = e.touches[0].clientY;
-        }, { passive: true });
+            
+            // 阻止页面滚动
+            e.preventDefault();
+        }, { passive: false });
         
         // 手势控制 - 触摸结束
         playerContainer.addEventListener('touchend', function(e) {
