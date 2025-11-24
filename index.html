@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>随机视频播放器</title>
+    <title>全屏随机视频播放器</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -14,136 +14,29 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: #000;
             color: #fff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
+            height: 100vh;
             overflow: hidden;
             position: fixed;
             width: 100%;
             height: 100%;
         }
         
-        .container {
-            width: 100%;
-            max-width: 500px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding-bottom: 20px;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-            flex-shrink: 0;
-        }
-        
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
-            background: linear-gradient(90deg, #ff7e5f, #feb47b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-        }
-        
-        .header p {
-            font-size: 15px;
-            opacity: 0.8;
-            margin-top: 5px;
-        }
-        
-        .source-selector {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
-            padding: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            flex-shrink: 0;
-        }
-        
-        .source-btn {
-            flex: 1;
-            padding: 14px 10px;
-            background: transparent;
-            border: none;
-            border-radius: 10px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .source-btn::before {
-            content: '';
-            position: absolute;
+        .player-container {
+            position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #ff7e5f, #feb47b);
-            transform: translateY(-5px);
-            transition: transform 0.3s ease;
-        }
-        
-        .source-btn.active {
-            background: rgba(255, 255, 255, 0.12);
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .source-btn.active::before {
-            transform: translateY(0);
-        }
-        
-        .source-icon {
-            font-size: 18px;
-            margin-bottom: 4px;
-        }
-        
-        .source-name {
-            font-weight: 500;
-            font-size: 14px;
-        }
-        
-        .source-desc {
-            font-size: 11px;
-            opacity: 0.7;
-        }
-        
-        .player-container {
-            position: relative;
             width: 100%;
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-            margin-bottom: 20px;
+            height: 100%;
             background: #000;
-            flex-shrink: 0;
-            aspect-ratio: 16/9;
+            z-index: 1;
         }
         
         #videoPlayer {
             width: 100%;
             height: 100%;
-            display: block;
-            background: #000;
-            object-fit: contain;
+            object-fit: cover;
         }
         
         .loading {
@@ -153,21 +46,196 @@
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.8);
             color: #fff;
-            padding: 14px 24px;
-            border-radius: 10px;
+            padding: 20px 30px;
+            border-radius: 15px;
             display: none;
-            font-size: 16px;
+            font-size: 18px;
             z-index: 10;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .skip-btn {
             position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 10;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .skip-btn:active {
+            transform: scale(0.9);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .controls-panel {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 10;
+            padding: 0 20px;
+        }
+        
+        .control-btn {
+            width: 70px;
+            height: 70px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .control-btn:active {
+            transform: scale(0.9);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .source-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 10;
+        }
+        
+        .source-btn {
+            padding: 12px 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            border-radius: 25px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .source-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 126, 95, 0.5);
+        }
+        
+        .swipe-indicator {
+            position: absolute;
+            bottom: 120px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            backdrop-filter: blur(10px);
+        }
+        
+        .swipe-indicator.show {
+            opacity: 1;
+        }
+        
+        .stats {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .info-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            z-index: 20;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+        }
+        
+        .info-panel h3 {
+            margin-bottom: 20px;
+            color: #feb47b;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-panel p {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.5;
+        }
+        
+        .info-panel i {
+            width: 20px;
+            color: #ff7e5f;
+        }
+        
+        .close-info {
+            position: absolute;
             top: 15px;
             right: 15px;
-            width: 48px;
-            height: 48px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .info-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
             background: rgba(0, 0, 0, 0.7);
             color: #fff;
             border: none;
@@ -179,220 +247,81 @@
             font-size: 20px;
             z-index: 10;
             transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .skip-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: scale(1.05);
+        .info-btn:active {
+            transform: scale(0.9);
         }
         
-        .skip-btn:active {
-            transform: scale(0.95);
-        }
-        
-        .controls {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-            width: 100%;
-            flex-shrink: 0;
-        }
-        
-        .control-btn {
-            flex: 1;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-weight: 500;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .control-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-        }
-        
-        .control-btn:active {
-            transform: translateY(0);
-        }
-        
-        .info {
-            margin-top: 25px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            font-size: 14px;
-            line-height: 1.6;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            flex-shrink: 0;
-        }
-        
-        .info h3 {
-            margin-bottom: 12px;
-            color: #feb47b;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .info p {
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .info i {
-            width: 20px;
-            color: #ff7e5f;
-        }
-        
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 13px;
-            opacity: 0.6;
-            flex-shrink: 0;
-        }
-        
-        .swipe-indicator {
+        .gesture-area {
             position: absolute;
-            bottom: 20px;
+            top: 0;
             left: 0;
-            right: 0;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 12px;
-            font-size: 14px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            backdrop-filter: blur(5px);
-        }
-        
-        .swipe-indicator.show {
-            opacity: 1;
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            font-size: 13px;
-            opacity: 0.7;
-            flex-shrink: 0;
-        }
-        
-        /* 滚动条样式 */
-        .container::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .container::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
-        }
-        
-        .container::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
-        }
-        
-        .container::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 24px;
-            }
-            
-            .control-btn {
-                font-size: 14px;
-                padding: 14px;
-            }
-            
-            .source-btn {
-                padding: 12px 8px;
-            }
+            width: 100%;
+            height: 100%;
+            z-index: 5;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-random"></i> 随机视频播放器</h1>
-            <p>点击跳过按钮或向上滑动切换下一个视频</p>
+    <div class="player-container">
+        <video id="videoPlayer" controls autoplay playsinline></video>
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin"></i> 加载中...
         </div>
         
-        <div class="source-selector">
+        <div class="gesture-area" id="gestureArea"></div>
+        
+        <button onclick="nextVideo()" class="skip-btn">
+            <i class="fas fa-forward"></i>
+        </button>
+        
+        <div class="source-panel">
             <button class="source-btn active" onclick="switchSource(0)">
-                <div class="source-icon"><i class="fas fa-video"></i></div>
-                <div class="source-name">源1</div>
-                <div class="source-desc">nrzj.vip</div>
+                <i class="fas fa-video"></i> 源1
             </button>
             <button class="source-btn" onclick="switchSource(1)">
-                <div class="source-icon"><i class="fas fa-film"></i></div>
-                <div class="source-name">源2</div>
-                <div class="source-desc">npcq.cn</div>
+                <i class="fas fa-film"></i> 源2
             </button>
-        </div>
-        
-        <div class="player-container" id="playerContainer">
-            <video id="videoPlayer" controls autoplay playsinline></video>
-            <div id="loading" class="loading">
-                <i class="fas fa-spinner fa-spin"></i> 加载中...
-            </div>
-            <button onclick="nextVideo()" class="skip-btn">
-                <i class="fas fa-forward"></i>
-            </button>
-            <div class="swipe-indicator" id="swipeIndicator">
-                <i class="fas fa-arrow-up"></i> 向上滑动切换视频
-            </div>
         </div>
         
         <div class="stats">
-            <div>已观看: <span id="videoCount">0</span> 个视频</div>
+            <div>已观看: <span id="videoCount">0</span></div>
             <div>当前源: <span id="currentSource">源1</span></div>
         </div>
         
-        <div class="controls">
+        <div class="controls-panel">
             <button onclick="playPause()" class="control-btn" id="playPauseBtn">
-                <i class="fas fa-pause"></i> 暂停
+                <i class="fas fa-pause"></i>
             </button>
             <button onclick="nextVideo()" class="control-btn">
-                <i class="fas fa-forward"></i> 下一个
+                <i class="fas fa-forward"></i>
             </button>
             <button onclick="toggleMute()" class="control-btn" id="muteBtn">
-                <i class="fas fa-volume-up"></i> 静音
+                <i class="fas fa-volume-up"></i>
             </button>
         </div>
         
-        <div class="info">
+        <div class="swipe-indicator" id="swipeIndicator">
+            <i class="fas fa-arrow-up"></i> 向上滑动切换视频
+        </div>
+        
+        <button onclick="toggleInfo()" class="info-btn">
+            <i class="fas fa-info"></i>
+        </button>
+        
+        <div class="info-panel" id="infoPanel">
+            <button class="close-info" onclick="toggleInfo()">
+                <i class="fas fa-times"></i>
+            </button>
             <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
-            <p><i class="fas fa-play-circle"></i> 视频将自动加载并播放</p>
-            <p><i class="fas fa-hand-point-up"></i> 点击跳过按钮或向上滑动切换到下一个随机视频</p>
+            <p><i class="fas fa-play-circle"></i> 视频将自动加载并全屏播放</p>
+            <p><i class="fas fa-hand-point-up"></i> 向上滑动屏幕切换下一个视频</p>
             <p><i class="fas fa-pause-circle"></i> 使用底部控制按钮进行暂停/播放和静音操作</p>
             <p><i class="fas fa-exchange-alt"></i> 可以在顶部切换不同的视频源</p>
             <p><i class="fas fa-spinner"></i> 视频加载时会有提示</p>
-        </div>
-        
-        <div class="footer">
-            <p>随机视频播放器 &copy; 2023 | 全屏固定版</p>
         </div>
     </div>
 
@@ -403,10 +332,11 @@
         const playPauseBtn = document.getElementById('playPauseBtn');
         const muteBtn = document.getElementById('muteBtn');
         const sourceBtns = document.querySelectorAll('.source-btn');
-        const playerContainer = document.getElementById('playerContainer');
+        const gestureArea = document.getElementById('gestureArea');
         const swipeIndicator = document.getElementById('swipeIndicator');
         const videoCountElement = document.getElementById('videoCount');
         const currentSourceElement = document.getElementById('currentSource');
+        const infoPanel = document.getElementById('infoPanel');
         
         // 视频源列表
         const videoSources = [
@@ -431,12 +361,9 @@
         let endY = 0;
         let isSwiping = false;
 
-        // 防止页面滚动
-        document.body.addEventListener('touchmove', function(e) {
-            // 只有在播放器区域才允许滑动切换视频
-            if (!e.target.closest('.player-container')) {
-                e.preventDefault();
-            }
+        // 阻止页面滚动
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
         }, { passive: false });
         
         // 视频加载开始时的处理
@@ -454,7 +381,7 @@
             const sourceUrl = videoSources[currentSourceIndex].url;
             videoPlayer.src = sourceUrl + "?t=" + Date.now();
             videoPlayer.play();
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停';
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
             
             // 更新视频计数
             videoCount++;
@@ -468,10 +395,10 @@
         function playPause() {
             if (videoPlayer.paused) {
                 videoPlayer.play();
-                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停';
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
             } else {
                 videoPlayer.pause();
-                playPauseBtn.innerHTML = '<i class="fas fa-play"></i> 播放';
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
             }
         }
         
@@ -479,9 +406,9 @@
         function toggleMute() {
             videoPlayer.muted = !videoPlayer.muted;
             if (videoPlayer.muted) {
-                muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i> 取消静音';
+                muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
             } else {
-                muteBtn.innerHTML = '<i class="fas fa-volume-up"></i> 静音';
+                muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
             }
         }
         
@@ -508,6 +435,15 @@
             nextVideo();
         }
         
+        // 显示/隐藏信息面板
+        function toggleInfo() {
+            if (infoPanel.style.display === 'block') {
+                infoPanel.style.display = 'none';
+            } else {
+                infoPanel.style.display = 'block';
+            }
+        }
+        
         // 显示滑动提示
         function showSwipeIndicator() {
             swipeIndicator.classList.add('show');
@@ -517,41 +453,30 @@
         }
         
         // 手势控制 - 触摸开始
-        playerContainer.addEventListener('touchstart', function(e) {
-            // 防止点击视频本身触发切换
-            if (e.target === videoPlayer) return;
-            
+        gestureArea.addEventListener('touchstart', function(e) {
             startY = e.touches[0].clientY;
             isSwiping = true;
         }, { passive: true });
         
         // 手势控制 - 触摸移动
-        playerContainer.addEventListener('touchmove', function(e) {
+        gestureArea.addEventListener('touchmove', function(e) {
             if (!isSwiping) return;
             endY = e.touches[0].clientY;
-            
-            // 阻止页面滚动
-            e.preventDefault();
-        }, { passive: false });
+        }, { passive: true });
         
         // 手势控制 - 触摸结束
-        playerContainer.addEventListener('touchend', function(e) {
+        gestureArea.addEventListener('touchend', function(e) {
             if (!isSwiping) return;
             
             const diffY = startY - endY;
             
-            // 如果向上滑动距离超过50px，则切换视频
-            if (diffY > 50) {
+            // 如果向上滑动距离超过80px，则切换视频
+            if (diffY > 80) {
                 nextVideo();
             }
             
             isSwiping = false;
         }, { passive: true });
-        
-        // 防止点击视频本身触发任何切换操作
-        videoPlayer.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
         
         // 初始化加载第一个视频
         nextVideo();
