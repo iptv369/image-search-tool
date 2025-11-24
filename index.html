@@ -4,15 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>随机视频播放器</title>
-    <!-- ========== 修复图标路径 - 使用相对路径 ========== -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="manifest" href="site.webmanifest">
-    <meta name="theme-color" content="#3498db">
-    <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -29,6 +21,7 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            touch-action: pan-y;
         }
         
         .container {
@@ -39,28 +32,96 @@
         
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .header h1 {
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 8px;
             background: linear-gradient(90deg, #ff7e5f, #feb47b);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-weight: 700;
         }
         
         .header p {
+            font-size: 15px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        .source-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .source-btn {
+            flex: 1;
+            padding: 14px 10px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, 0.7);
             font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .source-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+        
+        .source-btn.active {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .source-btn.active::before {
+            transform: translateY(0);
+        }
+        
+        .source-icon {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+        
+        .source-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .source-desc {
+            font-size: 11px;
             opacity: 0.7;
         }
         
         .player-container {
             position: relative;
             width: 100%;
-            border-radius: 16px;
+            border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
             margin-bottom: 20px;
             background: #000;
         }
@@ -79,19 +140,21 @@
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.8);
             color: #fff;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 14px 24px;
+            border-radius: 10px;
             display: none;
             font-size: 16px;
             z-index: 10;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .skip-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 44px;
-            height: 44px;
+            top: 15px;
+            right: 15px;
+            width: 48px;
+            height: 48px;
             background: rgba(0, 0, 0, 0.7);
             color: #fff;
             border: none;
@@ -100,29 +163,35 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
             z-index: 10;
             transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .skip-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
         }
         
         .skip-btn:active {
             transform: scale(0.95);
-            background: rgba(255, 255, 255, 0.2);
         }
         
         .controls {
             display: flex;
             gap: 12px;
-            margin-top: 15px;
+            margin-top: 20px;
             width: 100%;
         }
         
         .control-btn {
             flex: 1;
-            padding: 12px;
+            padding: 16px;
             background: rgba(255, 255, 255, 0.1);
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             color: #fff;
             font-size: 16px;
             cursor: pointer;
@@ -130,43 +199,99 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
         }
         
         .control-btn:active {
-            transform: scale(0.98);
-            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(0);
         }
         
         .info {
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 25px;
+            padding: 20px;
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
+            border-radius: 16px;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.6;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .info h3 {
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             color: #feb47b;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info p {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info i {
+            width: 20px;
+            color: #ff7e5f;
         }
         
         .footer {
             margin-top: 30px;
             text-align: center;
-            font-size: 12px;
+            font-size: 13px;
             opacity: 0.6;
+        }
+        
+        .swipe-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 12px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            backdrop-filter: blur(5px);
+        }
+        
+        .swipe-indicator.show {
+            opacity: 1;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 13px;
+            opacity: 0.7;
         }
         
         @media (max-width: 480px) {
             .header h1 {
-                font-size: 20px;
+                font-size: 24px;
             }
             
             .control-btn {
                 font-size: 14px;
-                padding: 10px;
+                padding: 14px;
+            }
+            
+            .source-btn {
+                padding: 12px 8px;
             }
         }
     </style>
@@ -174,32 +299,64 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>随机视频播放器</h1>
-            <p>点击跳过按钮切换下一个视频</p>
+            <h1><i class="fas fa-random"></i> 随机视频播放器</h1>
+            <p>点击跳过按钮或向上滑动切换下一个视频</p>
         </div>
         
-        <div class="player-container">
+        <div class="source-selector">
+            <button class="source-btn active" onclick="switchSource(0)">
+                <div class="source-icon"><i class="fas fa-video"></i></div>
+                <div class="source-name">源1</div>
+                <div class="source-desc">nrzj.vip</div>
+            </button>
+            <button class="source-btn" onclick="switchSource(1)">
+                <div class="source-icon"><i class="fas fa-film"></i></div>
+                <div class="source-name">源2</div>
+                <div class="source-desc">npcq.cn</div>
+            </button>
+        </div>
+        
+        <div class="player-container" id="playerContainer">
             <video id="videoPlayer" controls autoplay playsinline></video>
-            <div id="loading" class="loading">加载中...</div>
-            <button onclick="nextVideo()" class="skip-btn">⏭️</button>
+            <div id="loading" class="loading">
+                <i class="fas fa-spinner fa-spin"></i> 加载中...
+            </div>
+            <button onclick="nextVideo()" class="skip-btn">
+                <i class="fas fa-forward"></i>
+            </button>
+            <div class="swipe-indicator" id="swipeIndicator">
+                <i class="fas fa-arrow-up"></i> 向上滑动切换视频
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div>已观看: <span id="videoCount">0</span> 个视频</div>
+            <div>当前源: <span id="currentSource">源1</span></div>
         </div>
         
         <div class="controls">
-            <button onclick="playPause()" class="control-btn" id="playPauseBtn">⏸️ 暂停</button>
-            <button onclick="nextVideo()" class="control-btn">⏭️ 下一个</button>
-            <button onclick="toggleMute()" class="control-btn" id="muteBtn">🔊 静音</button>
+            <button onclick="playPause()" class="control-btn" id="playPauseBtn">
+                <i class="fas fa-pause"></i> 暂停
+            </button>
+            <button onclick="nextVideo()" class="control-btn">
+                <i class="fas fa-forward"></i> 下一个
+            </button>
+            <button onclick="toggleMute()" class="control-btn" id="muteBtn">
+                <i class="fas fa-volume-up"></i> 静音
+            </button>
         </div>
         
         <div class="info">
-            <h3>使用说明</h3>
-            <p>• 视频将自动加载并播放</p>
-            <p>• 点击跳过按钮切换到下一个随机视频</p>
-            <p>• 使用底部控制按钮进行暂停/播放和静音操作</p>
-            <p>• 视频加载时会有提示</p>
+            <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
+            <p><i class="fas fa-play-circle"></i> 视频将自动加载并播放</p>
+            <p><i class="fas fa-hand-point-up"></i> 点击跳过按钮或向上滑动切换到下一个随机视频</p>
+            <p><i class="fas fa-pause-circle"></i> 使用底部控制按钮进行暂停/播放和静音操作</p>
+            <p><i class="fas fa-exchange-alt"></i> 可以在顶部切换不同的视频源</p>
+            <p><i class="fas fa-spinner"></i> 视频加载时会有提示</p>
         </div>
         
         <div class="footer">
-            <p>随机视频播放器 &copy; 2023</p>
+            <p>随机视频播放器 &copy; 2023 | 设计优化版</p>
         </div>
     </div>
 
@@ -209,6 +366,34 @@
         const loading = document.getElementById('loading');
         const playPauseBtn = document.getElementById('playPauseBtn');
         const muteBtn = document.getElementById('muteBtn');
+        const sourceBtns = document.querySelectorAll('.source-btn');
+        const playerContainer = document.getElementById('playerContainer');
+        const swipeIndicator = document.getElementById('swipeIndicator');
+        const videoCountElement = document.getElementById('videoCount');
+        const currentSourceElement = document.getElementById('currentSource');
+        
+        // 视频源列表
+        const videoSources = [
+            {
+                url: "http://v.nrzj.vip/video.php",
+                name: "源1",
+                desc: "nrzj.vip"
+            },
+            {
+                url: "http://av.npcq.cn/api.php",
+                name: "源2", 
+                desc: "npcq.cn"
+            }
+        ];
+        
+        // 当前使用的视频源索引
+        let currentSourceIndex = 0;
+        let videoCount = 0;
+        
+        // 手势控制相关变量
+        let startY = 0;
+        let endY = 0;
+        let isSwiping = false;
         
         // 视频加载开始时的处理
         videoPlayer.onloadstart = videoPlayer.onwaiting = function() {
@@ -222,33 +407,104 @@
         
         // 切换到下一个视频
         window.nextVideo = function() {
-            videoPlayer.src = "http://av.npcq.cn/api.php?t=" + Date.now();
+            const sourceUrl = videoSources[currentSourceIndex].url;
+            videoPlayer.src = sourceUrl + "?t=" + Date.now();
             videoPlayer.play();
-            playPauseBtn.innerHTML = '⏸️ 暂停';
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停';
+            
+            // 更新视频计数
+            videoCount++;
+            videoCountElement.textContent = videoCount;
+            
+            // 显示滑动提示
+            showSwipeIndicator();
         };
         
         // 播放/暂停切换
         function playPause() {
             if (videoPlayer.paused) {
                 videoPlayer.play();
-                playPauseBtn.innerHTML = '⏸️ 暂停';
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停';
             } else {
                 videoPlayer.pause();
-                playPauseBtn.innerHTML = '▶️ 播放';
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i> 播放';
             }
         }
         
         // 静音切换
         function toggleMute() {
             videoPlayer.muted = !videoPlayer.muted;
-            muteBtn.innerHTML = videoPlayer.muted ? '🔇 取消静音' : '🔊 静音';
+            if (videoPlayer.muted) {
+                muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i> 取消静音';
+            } else {
+                muteBtn.innerHTML = '<i class="fas fa-volume-up"></i> 静音';
+            }
         }
         
         // 视频结束时自动播放下一个
         videoPlayer.onended = nextVideo;
         
+        // 切换视频源
+        function switchSource(index) {
+            currentSourceIndex = index;
+            
+            // 更新按钮状态
+            sourceBtns.forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // 更新当前源显示
+            currentSourceElement.textContent = videoSources[index].name;
+            
+            // 重新加载视频
+            nextVideo();
+        }
+        
+        // 显示滑动提示
+        function showSwipeIndicator() {
+            swipeIndicator.classList.add('show');
+            setTimeout(() => {
+                swipeIndicator.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 手势控制 - 触摸开始
+        playerContainer.addEventListener('touchstart', function(e) {
+            startY = e.touches[0].clientY;
+            isSwiping = true;
+        }, { passive: true });
+        
+        // 手势控制 - 触摸移动
+        playerContainer.addEventListener('touchmove', function(e) {
+            if (!isSwiping) return;
+            endY = e.touches[0].clientY;
+        }, { passive: true });
+        
+        // 手势控制 - 触摸结束
+        playerContainer.addEventListener('touchend', function(e) {
+            if (!isSwiping) return;
+            
+            const diffY = startY - endY;
+            
+            // 如果向上滑动距离超过50px，则切换视频
+            if (diffY > 50) {
+                nextVideo();
+            }
+            
+            isSwiping = false;
+        }, { passive: true });
+        
         // 初始化加载第一个视频
         nextVideo();
+        
+        // 页面加载后显示滑动提示
+        window.addEventListener('load', function() {
+            setTimeout(showSwipeIndicator, 1000);
+        });
     </script>
 </body>
 </html>
