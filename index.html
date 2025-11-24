@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全屏随机视频播放器</title>
+    <title>随机小姐姐</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ========== 修复图标路径 - 使用相对路径 ========== -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="theme-color" content="#3498db">
+    <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
     <style>
         * {
             margin: 0;
@@ -166,11 +175,14 @@
         
         .source-panel {
             position: absolute;
-            top: 20px;
-            left: 20px;
+            bottom: 120px;
+            left: 0;
+            right: 0;
             display: flex;
+            justify-content: center;
             gap: 15px;
             z-index: 10;
+            padding: 0 20px;
         }
         
         .source-btn {
@@ -197,7 +209,7 @@
         
         .swipe-indicator {
             position: absolute;
-            bottom: 120px;
+            bottom: 180px;
             left: 0;
             right: 0;
             text-align: center;
@@ -212,20 +224,6 @@
         
         .swipe-indicator.show {
             opacity: 1;
-        }
-        
-        .current-source {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 10;
         }
         
         .info-panel {
@@ -334,10 +332,6 @@
             </button>
         </div>
         
-        <div class="current-source">
-            当前源: <span id="currentSource">源1</span>
-        </div>
-        
         <div class="controls-panel">
             <button onclick="playPause()" class="control-btn" id="playPauseBtn">
                 <i class="fas fa-pause"></i>
@@ -366,7 +360,7 @@
             <p><i class="fas fa-play-circle"></i> 视频将自动加载并全屏播放</p>
             <p><i class="fas fa-hand-point-up"></i> 向上滑动屏幕切换下一个视频</p>
             <p><i class="fas fa-pause-circle"></i> 使用底部控制按钮进行暂停/播放和静音操作</p>
-            <p><i class="fas fa-exchange-alt"></i> 可以在顶部切换不同的视频源</p>
+            <p><i class="fas fa-exchange-alt"></i> 可以在底部切换不同的视频源</p>
             <p><i class="fas fa-spinner"></i> 视频加载时会有提示</p>
         </div>
     </div>
@@ -380,7 +374,6 @@
         const sourceBtns = document.querySelectorAll('.source-btn');
         const gestureArea = document.getElementById('gestureArea');
         const swipeIndicator = document.getElementById('swipeIndicator');
-        const currentSourceElement = document.getElementById('currentSource');
         const infoPanel = document.getElementById('infoPanel');
         
         // 视频源列表
@@ -467,9 +460,6 @@
                     btn.classList.remove('active');
                 }
             });
-            
-            // 更新当前源显示
-            currentSourceElement.textContent = videoSources[index].name;
             
             // 重新加载视频
             nextVideo();
