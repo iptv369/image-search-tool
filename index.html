@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>随机小姐姐</title>
-    link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- ========== 修复图标路径 - 使用相对路径 ========== -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -175,7 +175,7 @@
         }
         
         .source-btn.active {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 126, 95, 0.3);
             color: #fff;
             box-shadow: 0 0 12px rgba(255, 126, 95, 0.5);
         }
@@ -198,15 +198,15 @@
             position: absolute;
             top: 120px;
             right: 12px;
-            width: 200px;
-            background: rgba(0, 0, 0, 0.8);
+            width: 150px;
+            background: rgba(0, 0, 0, 0.9);
             border-radius: 12px;
-            padding: 10px;
+            padding: 12px;
             z-index: 15;
             display: none;
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            max-height: 300px;
+            max-height: 400px;
             overflow-y: auto;
         }
         
@@ -217,6 +217,8 @@
             margin-bottom: 10px;
             padding-bottom: 8px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            color: #ff7e5f;
         }
         
         .dropdown-search {
@@ -227,7 +229,7 @@
             border-radius: 8px;
             color: white;
             margin-bottom: 10px;
-            font-size: 14px;
+            font-size: 13px;
         }
         
         .dropdown-search::placeholder {
@@ -236,19 +238,20 @@
         
         .source-list {
             list-style: none;
-            max-height: 200px;
+            max-height: 300px;
             overflow-y: auto;
         }
         
         .source-list li {
-            padding: 8px 12px;
-            border-radius: 6px;
-            margin-bottom: 4px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
             cursor: pointer;
             font-size: 14px;
             transition: all 0.2s;
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
         
         .source-list li:hover {
@@ -260,10 +263,14 @@
             color: #ff7e5f;
         }
         
-        .source-list i {
-            margin-right: 8px;
-            width: 16px;
-            text-align: center;
+        .source-list .source-name {
+            flex: 1;
+        }
+        
+        .source-list .source-status {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-left: 8px;
         }
         
         .info-panel {
@@ -349,6 +356,17 @@
             height: 100%;
             z-index: 5;
         }
+        
+        /* 响应式调整 */
+        @media (max-height: 700px) {
+            .source-dropdown {
+                max-height: 300px;
+            }
+            
+            .source-list {
+                max-height: 200px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -383,7 +401,7 @@
         <!-- 源选择下拉菜单 -->
         <div class="source-dropdown" id="sourceDropdown">
             <div class="dropdown-header">
-                <span>选择视频源</span>
+                <span>选择视频源 (32个)</span>
                 <button onclick="toggleSourceDropdown()" style="background: none; border: none; color: white; cursor: pointer;">
                     <i class="fas fa-times"></i>
                 </button>
@@ -457,38 +475,40 @@
         const sourceList = document.getElementById('sourceList');
         const sourceSearch = document.getElementById('sourceSearch');
         
-        // 视频源列表 - 包含30个接口
+        // 视频源列表 - 包含32个接口
         const videoSources = [
-            { url: "https://188sp.711888.xyz/188/video.php", name: "源1", desc: "188sp.711888.xyz" },
-            { url: "https://v.nrzj.vip/video.php", name: "源2", desc: "nrzj.vip" },
-            { url: "https://www.cunshao.com/666666/api/pc.php", name: "源3", desc: "cunshao.com PC" },
-            { url: "https://www.cunshao.com/666666/api/web.php", name: "源4", desc: "cunshao.com Web" },
-            { url: "https://api.dwo.cc/api/video?v=xd", name: "源5", desc: "dwo.cc XD" },
-            { url: "https://api.dwo.cc/api/ksvideo", name: "源6", desc: "dwo.cc KS" },
-            { url: "https://api.suyanw.cn/api/xjj/api.php", name: "源7", desc: "suyanw.cn XJJ" },
-            { url: "https://api.suyanw.cn/api/kysp.php?lx=女神", name: "源8", desc: "suyanw.cn 女神" },
-            { url: "http://api.yujn.cn/api/zzxjj.php?type=video", name: "源9", desc: "yujn.cn ZZXJJ" },
-            { url: "http://api.yujn.cn/api/xjj.php?type=video", name: "源10", desc: "yujn.cn XJJ" },
-            { url: "https://api.yujn.cn/api/duilian.php?type=video", name: "源11", desc: "yujn.cn 对联" },
-            { url: "https://api.yujn.cn/api/nvda.php?type=video", name: "源12", desc: "yujn.cn 女大" },
-            { url: "http://api.yujn.cn/api/heisis.php?type=video", name: "源13", desc: "yujn.cn 黑丝" },
-            { url: "http://api.yujn.cn/api/baisis.php?type=video", name: "源14", desc: "yujn.cn 白丝" },
-            { url: "https://api.yujn.cn/api/manzhan.php?type=video", name: "源15", desc: "yujn.cn 满站" },
-            { url: "http://api.yujn.cn/api/juhexjj.php?type=video", name: "源16", desc: "yujn.cn 聚合XJJ" },
-            { url: "http://api.yujn.cn/api/chuanda.php?type=video", name: "源17", desc: "yujn.cn 穿搭" },
-            { url: "http://api.yujn.cn/api/shwd.php?type=video", name: "源18", desc: "yujn.cn 户外" },
-            { url: "http://api.yujn.cn/api/wmsc.php?type=video", name: "源19", desc: "yujn.cn 外卖" },
-            { url: "http://api.yujn.cn/api/hanfu.php?type=video", name: "源20", desc: "yujn.cn 汉服" },
-            { url: "http://api.yujn.cn/api/manyao.php?type=video", name: "源21", desc: "yujn.cn 漫摇" },
-            { url: "http://api.yujn.cn/api/qingchun.php?type=video", name: "源22", desc: "yujn.cn 青春" },
-            { url: "http://api.yujn.cn/api/COS.php?type=video", name: "源23", desc: "yujn.cn COS" },
-            { url: "http://api.yujn.cn/api/nvgao.php?type=video", name: "源24", desc: "yujn.cn 女高" },
-            { url: "http://api.yujn.cn/api/jiepai.php?type=video", name: "源25", desc: "yujn.cn 街拍" },
-            { url: "http://api.yujn.cn/api/ndym.php?type=video", name: "源26", desc: "yujn.cn 女大" },
-            { url: "http://api.yujn.cn/api/tianmei.php?type=video", name: "源27", desc: "yujn.cn 甜美" },
-            { url: "http://api.yujn.cn/api/rewu.php?type=video", name: "源28", desc: "yujn.cn 热舞" },
-            { url: "http://api.yujn.cn/api/ksxjjsp.php", name: "源29", desc: "yujn.cn KSXJJ" },
-            { url: "https://api.cnmpp.com/sj/?type=json", name: "源30", desc: "cnmpp.com" }
+            { url: "http://v.nrzj.vip/video.php", name: "源1", desc: "nrzj.vip" },
+            { url: "http://av.npcq.cn/api.php", name: "源2", desc: "npcq.cn" },
+            { url: "https://188sp.711888.xyz/188/video.php", name: "源3", desc: "188sp" },
+            { url: "https://v.nrzj.vip/video.php", name: "源4", desc: "nrzj" },
+            { url: "https://www.cunshao.com/666666/api/pc.php", name: "源5", desc: "cunshao PC" },
+            { url: "https://www.cunshao.com/666666/api/web.php", name: "源6", desc: "cunshao Web" },
+            { url: "https://api.dwo.cc/api/video?v=xd", name: "源7", desc: "dwo XD" },
+            { url: "https://api.dwo.cc/api/ksvideo", name: "源8", desc: "dwo KS" },
+            { url: "https://api.suyanw.cn/api/xjj/api.php", name: "源9", desc: "suyanw XJJ" },
+            { url: "https://api.suyanw.cn/api/kysp.php?lx=女神", name: "源10", desc: "suyanw 女神" },
+            { url: "http://api.yujn.cn/api/zzxjj.php?type=video", name: "源11", desc: "yujn ZZXJJ" },
+            { url: "http://api.yujn.cn/api/xjj.php?type=video", name: "源12", desc: "yujn XJJ" },
+            { url: "https://api.yujn.cn/api/duilian.php?type=video", name: "源13", desc: "yujn 对联" },
+            { url: "https://api.yujn.cn/api/nvda.php?type=video", name: "源14", desc: "yujn 女大" },
+            { url: "http://api.yujn.cn/api/heisis.php?type=video", name: "源15", desc: "yujn 黑丝" },
+            { url: "http://api.yujn.cn/api/baisis.php?type=video", name: "源16", desc: "yujn 白丝" },
+            { url: "https://api.yujn.cn/api/manzhan.php?type=video", name: "源17", desc: "yujn 满站" },
+            { url: "http://api.yujn.cn/api/juhexjj.php?type=video", name: "源18", desc: "yujn 聚合XJJ" },
+            { url: "http://api.yujn.cn/api/chuanda.php?type=video", name: "源19", desc: "yujn 穿搭" },
+            { url: "http://api.yujn.cn/api/shwd.php?type=video", name: "源20", desc: "yujn 户外" },
+            { url: "http://api.yujn.cn/api/wmsc.php?type=video", name: "源21", desc: "yujn 外卖" },
+            { url: "http://api.yujn.cn/api/hanfu.php?type=video", name: "源22", desc: "yujn 汉服" },
+            { url: "http://api.yujn.cn/api/manyao.php?type=video", name: "源23", desc: "yujn 漫摇" },
+            { url: "http://api.yujn.cn/api/qingchun.php?type=video", name: "源24", desc: "yujn 青春" },
+            { url: "http://api.yujn.cn/api/COS.php?type=video", name: "源25", desc: "yujn COS" },
+            { url: "http://api.yujn.cn/api/nvgao.php?type=video", name: "源26", desc: "yujn 女高" },
+            { url: "http://api.yujn.cn/api/jiepai.php?type=video", name: "源27", desc: "yujn 街拍" },
+            { url: "http://api.yujn.cn/api/ndym.php?type=video", name: "源28", desc: "yujn 女大" },
+            { url: "http://api.yujn.cn/api/tianmei.php?type=video", name: "源29", desc: "yujn 甜美" },
+            { url: "http://api.yujn.cn/api/rewu.php?type=video", name: "源30", desc: "yujn 热舞" },
+            { url: "http://api.yujn.cn/api/ksxjjsp.php", name: "源31", desc: "yujn KSXJJ" },
+            { url: "https://api.cnmpp.com/sj/?type=json", name: "源32", desc: "cnmpp" }
         ];
         
         // 当前使用的视频源索引
@@ -513,7 +533,10 @@
             sourceList.innerHTML = '';
             videoSources.forEach((source, index) => {
                 const li = document.createElement('li');
-                li.innerHTML = `<i class="fas fa-video"></i> ${source.name} - ${source.desc}`;
+                li.innerHTML = `
+                    <span class="source-name">${source.name}</span>
+                    <span class="source-status">${source.desc}</span>
+                `;
                 li.addEventListener('click', () => {
                     switchSource(index);
                     toggleSourceDropdown();
@@ -533,7 +556,7 @@
             for (let i = 0; i < items.length; i++) {
                 const text = items[i].textContent.toLowerCase();
                 if (text.includes(searchTerm)) {
-                    items[i].style.display = '';
+                    items[i].style.display = 'flex';
                 } else {
                     items[i].style.display = 'none';
                 }
@@ -548,8 +571,21 @@
                 sourceDropdown.style.display = 'block';
                 sourceSearch.value = '';
                 initSourceList();
+                
+                // 重置所有列表项的显示
+                const items = sourceList.getElementsByTagName('li');
+                for (let i = 0; i < items.length; i++) {
+                    items[i].style.display = 'flex';
+                }
             }
         }
+        
+        // 点击其他地方关闭下拉菜单
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.source-panel') && !event.target.closest('.source-dropdown')) {
+                sourceDropdown.style.display = 'none';
+            }
+        });
         
         // 视频加载开始时的处理
         videoPlayer.onloadstart = videoPlayer.onwaiting = function() {
