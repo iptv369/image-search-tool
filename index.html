@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>随机小姐姐</title>
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- ========== 修复图标路径 - 使用相对路径 ========== -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -14,7 +12,8 @@
     <link rel="manifest" href="site.webmanifest">
     <meta name="theme-color" content="#3498db">
     <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png"><link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -198,7 +197,7 @@
             position: absolute;
             top: 120px;
             right: 12px;
-            width: 180px;
+            width: 200px;
             background: rgba(0, 0, 0, 0.95);
             border-radius: 16px;
             padding: 16px;
@@ -206,7 +205,7 @@
             display: none;
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            max-height: 420px;
+            max-height: 70vh;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
@@ -246,8 +245,9 @@
         }
         
         .source-list-container {
-            max-height: 320px;
+            max-height: calc(70vh - 120px);
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* 启用iOS弹性滚动 */
             padding-right: 4px;
         }
         
@@ -267,22 +267,19 @@
         
         .source-list {
             list-style: none;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
         
         .source-list li {
-            padding: 12px 10px;
+            padding: 12px 16px;
             border-radius: 12px;
             cursor: pointer;
             font-size: 14px;
             transition: all 0.3s ease;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.08);
             position: relative;
@@ -323,7 +320,7 @@
         
         .source-icon {
             font-size: 18px;
-            margin-bottom: 6px;
+            margin-right: 12px;
             color: #ff7e5f;
             width: 36px;
             height: 36px;
@@ -332,7 +329,14 @@
             justify-content: center;
             background: rgba(255, 126, 95, 0.1);
             border-radius: 10px;
-            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
+        
+        .source-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
         
         .source-name {
@@ -341,12 +345,8 @@
         }
         
         .source-desc {
-            font-size: 10px;
+            font-size: 11px;
             color: rgba(255, 255, 255, 0.6);
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
         
         .info-panel {
@@ -436,11 +436,11 @@
         /* 响应式调整 */
         @media (max-height: 700px) {
             .source-dropdown {
-                max-height: 350px;
+                max-height: 60vh;
             }
             
             .source-list-container {
-                max-height: 250px;
+                max-height: calc(60vh - 120px);
             }
         }
     </style>
@@ -529,7 +529,7 @@
             <button class="close-info" onclick="toggleInfo()">
                 <i class="fas fa-times"></i>
             </button>
-            <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
+            <h3><i class="fas fa-info-circle"></i> Echo使用说明</h3>
             <p><i class="fas fa-play-circle"></i> 视频将自动加载并全屏播放</p>
             <p><i class="fas fa-hand-point-up"></i> 向上滑动屏幕切换下一个视频</p>
             <p><i class="fas fa-pause-circle"></i> 使用右侧控制按钮进行暂停/播放和静音操作</p>
@@ -552,6 +552,7 @@
         const sourceDropdown = document.getElementById('sourceDropdown');
         const sourceList = document.getElementById('sourceList');
         const sourceSearch = document.getElementById('sourceSearch');
+        const sourceListContainer = document.querySelector('.source-list-container');
         
         // 视频源列表 - 包含32个接口
         const videoSources = [
@@ -613,8 +614,12 @@
         let endY = 0;
         let isSwiping = false;
 
-        // 阻止页面滚动
+        // 阻止页面滚动，但允许源列表滚动
         document.addEventListener('touchmove', function(e) {
+            // 如果触摸点在源列表容器内，允许滚动
+            if (e.target.closest('.source-list-container')) {
+                return;
+            }
             e.preventDefault();
         }, { passive: false });
         
@@ -629,8 +634,10 @@
                     <div class="source-icon">
                         <i class="fas ${sourceIcons[iconIndex]}"></i>
                     </div>
-                    <div class="source-name">${source.name}</div>
-                    <div class="source-desc">${source.desc}</div>
+                    <div class="source-info">
+                        <div class="source-name">${source.name}</div>
+                        <div class="source-desc">${source.desc}</div>
+                    </div>
                 `;
                 
                 li.addEventListener('click', () => {
