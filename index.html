@@ -3,17 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>随机小姐姐</title>
+    <title>抖音风格全屏视频播放器</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- ========== 修复图标路径 - 使用相对路径 ========== -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="manifest" href="site.webmanifest">
-    <meta name="theme-color" content="#3498db">
-    <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
     <style>
         * {
             margin: 0;
@@ -104,10 +95,10 @@
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.8);
             color: #fff;
-            padding: 20px 30px;
-            border-radius: 15px;
+            padding: 15px 25px;
+            border-radius: 12px;
             display: none;
-            font-size: 18px;
+            font-size: 16px;
             z-index: 10;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -115,11 +106,11 @@
         
         .skip-btn {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: rgba(0, 0, 0, 0.7);
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            background: rgba(0, 0, 0, 0.5);
             color: #fff;
             border: none;
             border-radius: 50%;
@@ -127,7 +118,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 16px;
             z-index: 10;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
@@ -139,22 +130,22 @@
             background: rgba(255, 255, 255, 0.2);
         }
         
-        .controls-panel {
+        /* 右侧控制面板 */
+        .right-controls {
             position: absolute;
-            bottom: 30px;
-            left: 0;
-            right: 0;
+            right: 12px;
+            bottom: 100px;
             display: flex;
-            justify-content: center;
-            gap: 20px;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
             z-index: 10;
-            padding: 0 20px;
         }
         
         .control-btn {
-            width: 70px;
-            height: 70px;
-            background: rgba(0, 0, 0, 0.7);
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.5);
             color: #fff;
             border: none;
             border-radius: 50%;
@@ -162,7 +153,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 18px;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -173,49 +164,75 @@
             background: rgba(255, 255, 255, 0.2);
         }
         
+        .control-label {
+            font-size: 11px;
+            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+        
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* 右侧源选择面板 */
         .source-panel {
             position: absolute;
-            bottom: 120px;
-            left: 0;
-            right: 0;
+            right: 12px;
+            top: 70px;
             display: flex;
-            justify-content: center;
-            gap: 15px;
+            flex-direction: column;
+            gap: 8px;
             z-index: 10;
-            padding: 0 20px;
         }
         
         .source-btn {
-            padding: 12px 20px;
-            background: rgba(0, 0, 0, 0.7);
-            border: none;
-            border-radius: 25px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.5);
             color: rgba(255, 255, 255, 0.8);
-            font-size: 16px;
+            border: none;
+            border-radius: 50%;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         
         .source-btn.active {
             background: rgba(255, 255, 255, 0.2);
             color: #fff;
-            box-shadow: 0 0 20px rgba(255, 126, 95, 0.5);
+            box-shadow: 0 0 12px rgba(255, 126, 95, 0.5);
+        }
+        
+        .source-label {
+            font-size: 10px;
+            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+        
+        .source-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .swipe-indicator {
             position: absolute;
-            bottom: 180px;
+            bottom: 160px;
             left: 0;
             right: 0;
             text-align: center;
             background: rgba(0, 0, 0, 0.6);
-            padding: 15px;
-            font-size: 16px;
+            padding: 12px;
+            font-size: 14px;
             opacity: 0;
             transition: opacity 0.5s;
             pointer-events: none;
@@ -232,9 +249,9 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.9);
-            padding: 30px;
-            border-radius: 20px;
-            max-width: 400px;
+            padding: 25px;
+            border-radius: 18px;
+            max-width: 380px;
             width: 90%;
             z-index: 20;
             backdrop-filter: blur(20px);
@@ -243,45 +260,46 @@
         }
         
         .info-panel h3 {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             color: #feb47b;
-            font-size: 22px;
+            font-size: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         
         .info-panel p {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            line-height: 1.5;
+            gap: 8px;
+            line-height: 1.4;
+            font-size: 14px;
         }
         
         .info-panel i {
-            width: 20px;
+            width: 18px;
             color: #ff7e5f;
         }
         
         .close-info {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 12px;
+            right: 12px;
             background: none;
             border: none;
             color: #fff;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
         }
         
         .info-btn {
             position: absolute;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background: rgba(0, 0, 0, 0.7);
+            bottom: 25px;
+            right: 25px;
+            width: 36px;
+            height: 36px;
+            background: rgba(0, 0, 0, 0.5);
             color: #fff;
             border: none;
             border-radius: 50%;
@@ -289,7 +307,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 16px;
             z-index: 10;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
@@ -323,25 +341,51 @@
             <i class="fas fa-forward"></i>
         </button>
         
+        <!-- 右侧源选择面板 -->
         <div class="source-panel">
-            <button class="source-btn active" onclick="switchSource(0)">
-                <i class="fas fa-video"></i> 源1
-            </button>
-            <button class="source-btn" onclick="switchSource(1)">
-                <i class="fas fa-film"></i> 源2
-            </button>
+            <div class="source-item">
+                <button class="source-btn active" onclick="switchSource(0)">
+                    <i class="fas fa-video"></i>
+                </button>
+                <div class="source-label">源1</div>
+            </div>
+            <div class="source-item">
+                <button class="source-btn" onclick="switchSource(1)">
+                    <i class="fas fa-film"></i>
+                </button>
+                <div class="source-label">源2</div>
+            </div>
         </div>
         
-        <div class="controls-panel">
-            <button onclick="playPause()" class="control-btn" id="playPauseBtn">
-                <i class="fas fa-pause"></i>
-            </button>
-            <button onclick="nextVideo()" class="control-btn">
-                <i class="fas fa-forward"></i>
-            </button>
-            <button onclick="toggleMute()" class="control-btn" id="muteBtn">
-                <i class="fas fa-volume-up"></i>
-            </button>
+        <!-- 右侧控制面板 -->
+        <div class="right-controls">
+            <div class="control-item">
+                <button onclick="toggleLike()" class="control-btn" id="likeBtn">
+                    <i class="far fa-heart"></i>
+                </button>
+                <div class="control-label" id="likeCount">0</div>
+            </div>
+            
+            <div class="control-item">
+                <button onclick="playPause()" class="control-btn" id="playPauseBtn">
+                    <i class="fas fa-pause"></i>
+                </button>
+                <div class="control-label">播放</div>
+            </div>
+            
+            <div class="control-item">
+                <button onclick="toggleMute()" class="control-btn" id="muteBtn">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+                <div class="control-label">音量</div>
+            </div>
+            
+            <div class="control-item">
+                <button onclick="nextVideo()" class="control-btn">
+                    <i class="fas fa-forward"></i>
+                </button>
+                <div class="control-label">下一个</div>
+            </div>
         </div>
         
         <div class="swipe-indicator" id="swipeIndicator">
@@ -359,8 +403,8 @@
             <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
             <p><i class="fas fa-play-circle"></i> 视频将自动加载并全屏播放</p>
             <p><i class="fas fa-hand-point-up"></i> 向上滑动屏幕切换下一个视频</p>
-            <p><i class="fas fa-pause-circle"></i> 使用底部控制按钮进行暂停/播放和静音操作</p>
-            <p><i class="fas fa-exchange-alt"></i> 可以在底部切换不同的视频源</p>
+            <p><i class="fas fa-pause-circle"></i> 使用右侧控制按钮进行暂停/播放和静音操作</p>
+            <p><i class="fas fa-exchange-alt"></i> 可以在右侧切换不同的视频源</p>
             <p><i class="fas fa-spinner"></i> 视频加载时会有提示</p>
         </div>
     </div>
@@ -371,6 +415,8 @@
         const loading = document.getElementById('loading');
         const playPauseBtn = document.getElementById('playPauseBtn');
         const muteBtn = document.getElementById('muteBtn');
+        const likeBtn = document.getElementById('likeBtn');
+        const likeCount = document.getElementById('likeCount');
         const sourceBtns = document.querySelectorAll('.source-btn');
         const gestureArea = document.getElementById('gestureArea');
         const swipeIndicator = document.getElementById('swipeIndicator');
@@ -392,6 +438,10 @@
         
         // 当前使用的视频源索引
         let currentSourceIndex = 0;
+        
+        // 点赞计数
+        let likes = 0;
+        let isLiked = false;
         
         // 手势控制相关变量
         let startY = 0;
@@ -420,6 +470,10 @@
             videoPlayer.play();
             playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
             
+            // 重置点赞状态
+            isLiked = false;
+            likeBtn.innerHTML = '<i class="far fa-heart"></i>';
+            
             // 显示滑动提示
             showSwipeIndicator();
         };
@@ -443,6 +497,19 @@
             } else {
                 muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
             }
+        }
+        
+        // 点赞功能
+        function toggleLike() {
+            isLiked = !isLiked;
+            if (isLiked) {
+                likes++;
+                likeBtn.innerHTML = '<i class="fas fa-heart" style="color: #fe2c55;"></i>';
+            } else {
+                likes--;
+                likeBtn.innerHTML = '<i class="far fa-heart"></i>';
+            }
+            likeCount.textContent = likes;
         }
         
         // 视频结束时自动播放下一个
