@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>抖音风格全屏视频播放器</title>
+    <title>随机小姐姐</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ========== 修复图标路径 - 使用相对路径 ========== -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="theme-color" content="#3498db">
+    <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
     <style>
         * {
             margin: 0;
@@ -224,25 +233,6 @@
             align-items: center;
         }
         
-        .swipe-indicator {
-            position: absolute;
-            bottom: 160px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 12px;
-            font-size: 14px;
-            opacity: 0;
-            transition: opacity 0.5s;
-            pointer-events: none;
-            backdrop-filter: blur(10px);
-        }
-        
-        .swipe-indicator.show {
-            opacity: 1;
-        }
-        
         .info-panel {
             position: absolute;
             top: 50%;
@@ -388,10 +378,6 @@
             </div>
         </div>
         
-        <div class="swipe-indicator" id="swipeIndicator">
-            <i class="fas fa-arrow-up"></i> 向上滑动切换视频
-        </div>
-        
         <button onclick="toggleInfo()" class="info-btn">
             <i class="fas fa-info"></i>
         </button>
@@ -419,7 +405,6 @@
         const likeCount = document.getElementById('likeCount');
         const sourceBtns = document.querySelectorAll('.source-btn');
         const gestureArea = document.getElementById('gestureArea');
-        const swipeIndicator = document.getElementById('swipeIndicator');
         const infoPanel = document.getElementById('infoPanel');
         
         // 视频源列表
@@ -473,9 +458,6 @@
             // 重置点赞状态
             isLiked = false;
             likeBtn.innerHTML = '<i class="far fa-heart"></i>';
-            
-            // 显示滑动提示
-            showSwipeIndicator();
         };
         
         // 播放/暂停切换
@@ -541,14 +523,6 @@
             }
         }
         
-        // 显示滑动提示
-        function showSwipeIndicator() {
-            swipeIndicator.classList.add('show');
-            setTimeout(() => {
-                swipeIndicator.classList.remove('show');
-            }, 3000);
-        }
-        
         // 手势控制 - 触摸开始
         gestureArea.addEventListener('touchstart', function(e) {
             startY = e.touches[0].clientY;
@@ -577,11 +551,6 @@
         
         // 初始化加载第一个视频
         nextVideo();
-        
-        // 页面加载后显示滑动提示
-        window.addEventListener('load', function() {
-            setTimeout(showSwipeIndicator, 1000);
-        });
     </script>
 </body>
 </html>
