@@ -198,79 +198,155 @@
             position: absolute;
             top: 120px;
             right: 12px;
-            width: 150px;
-            background: rgba(0, 0, 0, 0.9);
-            border-radius: 12px;
-            padding: 12px;
+            width: 180px;
+            background: rgba(0, 0, 0, 0.95);
+            border-radius: 16px;
+            padding: 16px;
             z-index: 15;
             display: none;
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            max-height: 400px;
-            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            max-height: 420px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         
         .dropdown-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 14px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            font-size: 15px;
             color: #ff7e5f;
+            font-weight: 600;
         }
         
         .dropdown-search {
             width: 100%;
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.08);
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             color: white;
-            margin-bottom: 10px;
-            font-size: 13px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .dropdown-search:focus {
+            background: rgba(255, 255, 255, 0.12);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(255, 126, 95, 0.3);
         }
         
         .dropdown-search::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .source-list-container {
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        
+        .source-list-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .source-list-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+        }
+        
+        .source-list-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 126, 95, 0.5);
+            border-radius: 2px;
         }
         
         .source-list {
             list-style: none;
-            max-height: 300px;
-            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
         }
         
         .source-list li {
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin-bottom: 6px;
+            padding: 12px 10px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .source-list li:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
         }
         
         .source-list li:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .source-list li:hover:before {
+            transform: scaleX(1);
         }
         
         .source-list li.active {
-            background: rgba(255, 126, 95, 0.3);
+            background: rgba(255, 126, 95, 0.15);
+            border-color: rgba(255, 126, 95, 0.4);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.2);
+        }
+        
+        .source-list li.active:before {
+            transform: scaleX(1);
+        }
+        
+        .source-icon {
+            font-size: 18px;
+            margin-bottom: 6px;
             color: #ff7e5f;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 126, 95, 0.1);
+            border-radius: 10px;
+            margin-bottom: 8px;
         }
         
-        .source-list .source-name {
-            flex: 1;
+        .source-name {
+            font-weight: 500;
+            margin-bottom: 2px;
         }
         
-        .source-list .source-status {
+        .source-desc {
             font-size: 10px;
             color: rgba(255, 255, 255, 0.6);
-            margin-left: 8px;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         
         .info-panel {
@@ -360,11 +436,11 @@
         /* 响应式调整 */
         @media (max-height: 700px) {
             .source-dropdown {
-                max-height: 300px;
+                max-height: 350px;
             }
             
-            .source-list {
-                max-height: 200px;
+            .source-list-container {
+                max-height: 250px;
             }
         }
     </style>
@@ -407,9 +483,11 @@
                 </button>
             </div>
             <input type="text" class="dropdown-search" id="sourceSearch" placeholder="搜索视频源...">
-            <ul class="source-list" id="sourceList">
-                <!-- 源列表将通过JavaScript动态生成 -->
-            </ul>
+            <div class="source-list-container">
+                <ul class="source-list" id="sourceList">
+                    <!-- 源列表将通过JavaScript动态生成 -->
+                </ul>
+            </div>
         </div>
         
         <!-- 右侧控制面板 -->
@@ -511,6 +589,18 @@
             { url: "https://api.cnmpp.com/sj/?type=json", name: "源32", desc: "cnmpp" }
         ];
         
+        // 图标列表
+        const sourceIcons = [
+            'fa-video', 'fa-film', 'fa-tv', 'fa-play-circle',
+            'fa-photo-video', 'fa-clapperboard', 'fa-circle-play', 'fa-display',
+            'fa-server', 'fa-cloud', 'fa-bolt', 'fa-star',
+            'fa-heart', 'fa-gem', 'fa-crown', 'fa-rocket',
+            'fa-magic', 'fa-sparkles', 'fa-fire', 'fa-sun',
+            'fa-moon', 'fa-cloud-moon', 'fa-cloud-sun', 'fa-rainbow',
+            'fa-tree', 'fa-feather', 'fa-fish', 'fa-dragon',
+            'fa-otter', 'fa-hippo', 'fa-cat', 'fa-dog'
+        ];
+        
         // 当前使用的视频源索引
         let currentSourceIndex = 0;
         
@@ -533,17 +623,25 @@
             sourceList.innerHTML = '';
             videoSources.forEach((source, index) => {
                 const li = document.createElement('li');
+                const iconIndex = index % sourceIcons.length;
+                
                 li.innerHTML = `
-                    <span class="source-name">${source.name}</span>
-                    <span class="source-status">${source.desc}</span>
+                    <div class="source-icon">
+                        <i class="fas ${sourceIcons[iconIndex]}"></i>
+                    </div>
+                    <div class="source-name">${source.name}</div>
+                    <div class="source-desc">${source.desc}</div>
                 `;
+                
                 li.addEventListener('click', () => {
                     switchSource(index);
                     toggleSourceDropdown();
                 });
+                
                 if (index === currentSourceIndex) {
                     li.classList.add('active');
                 }
+                
                 sourceList.appendChild(li);
             });
         }
@@ -577,6 +675,11 @@
                 for (let i = 0; i < items.length; i++) {
                     items[i].style.display = 'flex';
                 }
+                
+                // 聚焦搜索框
+                setTimeout(() => {
+                    sourceSearch.focus();
+                }, 100);
             }
         }
         
