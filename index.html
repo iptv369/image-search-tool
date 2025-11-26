@@ -6,7 +6,7 @@
     <title>随机小姐姐</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- ========== 修复图标路径 - 使用相对路径 ========== -->
+    <!-- ========== 修复图标路径 - 使用相对路径 ========== -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
@@ -14,7 +14,8 @@
     <link rel="manifest" href="site.webmanifest">
     <meta name="theme-color" content="#3498db">
     <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png"><link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -24,22 +25,11 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            background: #000;
             color: #fff;
             height: 100vh;
             overflow: hidden;
             position: relative;
-        }
-        
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0) 70%);
-            z-index: -1;
         }
         
         .container {
@@ -50,30 +40,6 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-        }
-        
-        .header {
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 20;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 20px;
-            font-weight: 600;
-            color: #ff7e5f;
-        }
-        
-        .logo i {
-            font-size: 24px;
         }
         
         .video-container {
@@ -94,60 +60,12 @@
             background: #000;
         }
         
-        .loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            padding: 20px 30px;
-            border-radius: 15px;
-            display: none;
-            font-size: 18px;
-            z-index: 10;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .loading i {
-            font-size: 32px;
-            color: #ff7e5f;
-        }
-        
-        .error-message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 0, 0, 0.8);
-            color: #fff;
-            padding: 20px 30px;
-            border-radius: 15px;
-            display: none;
-            font-size: 16px;
-            z-index: 10;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            max-width: 80%;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .error-message i {
-            font-size: 32px;
-        }
-        
         .skip-btn {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
             background: rgba(0, 0, 0, 0.5);
             color: #fff;
             border: none;
@@ -156,7 +74,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 16px;
             z-index: 10;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
@@ -175,18 +93,18 @@
         /* 右侧控制面板 */
         .right-controls {
             position: absolute;
-            right: 20px;
-            bottom: 100px;
+            right: 12px;
+            bottom: 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 12px;
             z-index: 10;
         }
         
         .control-btn {
-            width: 50px;
-            height: 50px;
+            width: 38px;
+            height: 38px;
             background: rgba(0, 0, 0, 0.5);
             color: #fff;
             border: none;
@@ -195,7 +113,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 16px;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -211,8 +129,8 @@
         }
         
         .control-label {
-            font-size: 12px;
-            margin-top: 5px;
+            font-size: 10px;
+            margin-top: 3px;
             color: rgba(255, 255, 255, 0.8);
             text-align: center;
         }
@@ -226,17 +144,17 @@
         /* 右侧源选择面板 */
         .source-panel {
             position: absolute;
-            right: 20px;
-            top: 90px;
+            right: 12px;
+            top: 60px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             z-index: 10;
         }
         
         .source-btn {
-            width: 45px;
-            height: 45px;
+            width: 36px;
+            height: 36px;
             background: rgba(0, 0, 0, 0.5);
             color: rgba(255, 255, 255, 0.8);
             border: none;
@@ -245,7 +163,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 14px;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -259,12 +177,12 @@
         .source-btn.active {
             background: rgba(255, 126, 95, 0.3);
             color: #fff;
-            box-shadow: 0 0 15px rgba(255, 126, 95, 0.5);
+            box-shadow: 0 0 10px rgba(255, 126, 95, 0.5);
         }
         
         .source-label {
-            font-size: 11px;
-            margin-top: 4px;
+            font-size: 9px;
+            margin-top: 2px;
             color: rgba(255, 255, 255, 0.8);
             text-align: center;
         }
@@ -275,233 +193,88 @@
             align-items: center;
         }
         
-        /* 下拉菜单样式 */
+        /* 下拉菜单样式 - 最小化 */
         .source-dropdown {
             position: absolute;
-            top: 150px;
-            right: 20px;
-            width: 280px;
-            background: rgba(0, 0, 0, 0.95);
-            border-radius: 18px;
-            padding: 20px;
+            top: 100px;
+            right: 12px;
+            width: 160px;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 12px;
+            padding: 10px;
             z-index: 15;
             display: none;
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            max-height: 70vh;
+            max-height: 60vh;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
         
         .dropdown-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-            font-size: 16px;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
             color: #ff7e5f;
             font-weight: 600;
-        }
-        
-        .dropdown-search {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.08);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            margin-bottom: 15px;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        
-        .dropdown-search:focus {
-            background: rgba(255, 255, 255, 0.12);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(255, 126, 95, 0.3);
-        }
-        
-        .dropdown-search::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-        
-        .source-list-container {
-            max-height: calc(70vh - 140px);
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding-right: 5px;
-        }
-        
-        .source-list-container::-webkit-scrollbar {
-            width: 5px;
-        }
-        
-        .source-list-container::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
-        }
-        
-        .source-list-container::-webkit-scrollbar-thumb {
-            background: rgba(255, 126, 95, 0.5);
-            border-radius: 3px;
         }
         
         .source-list {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 6px;
         }
         
         .source-list li {
-            padding: 14px 16px;
-            border-radius: 14px;
+            padding: 8px 10px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 12px;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .source-list li:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #ff7e5f, #feb47b);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
         }
         
         .source-list li:hover {
             background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .source-list li:hover:before {
-            transform: scaleX(1);
         }
         
         .source-list li.active {
             background: rgba(255, 126, 95, 0.15);
             border-color: rgba(255, 126, 95, 0.4);
-            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.2);
-        }
-        
-        .source-list li.active:before {
-            transform: scaleX(1);
         }
         
         .source-icon {
-            font-size: 20px;
-            margin-right: 15px;
+            font-size: 12px;
+            margin-right: 8px;
             color: #ff7e5f;
-            width: 40px;
-            height: 40px;
+            width: 24px;
+            height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: rgba(255, 126, 95, 0.1);
-            border-radius: 12px;
+            border-radius: 6px;
             flex-shrink: 0;
-        }
-        
-        .source-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
         }
         
         .source-name {
             font-weight: 500;
-            margin-bottom: 3px;
-            font-size: 16px;
-        }
-        
-        .source-desc {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-        
-        .info-panel {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 30px;
-            border-radius: 20px;
-            max-width: 420px;
-            width: 90%;
-            z-index: 20;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: none;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        }
-        
-        .info-panel h3 {
-            margin-bottom: 20px;
-            color: #feb47b;
-            font-size: 22px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .info-panel p {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            line-height: 1.5;
-            font-size: 15px;
-        }
-        
-        .info-panel i {
-            width: 22px;
-            color: #ff7e5f;
-            font-size: 18px;
-        }
-        
-        .close-info {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 20px;
-            cursor: pointer;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-        
-        .close-info:hover {
-            background: rgba(255, 255, 255, 0.1);
         }
         
         .info-btn {
             position: absolute;
-            bottom: 30px;
-            right: 30px;
-            width: 45px;
-            height: 45px;
+            bottom: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
             background: rgba(0, 0, 0, 0.5);
             color: #fff;
             border: none;
@@ -510,7 +283,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 14px;
             z-index: 10;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
@@ -520,6 +293,69 @@
         .info-btn:hover {
             background: rgba(255, 126, 95, 0.3);
             transform: scale(1.05);
+        }
+        
+        .info-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 320px;
+            width: 90%;
+            z-index: 20;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        .info-panel h3 {
+            margin-bottom: 15px;
+            color: #feb47b;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-panel p {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.4;
+            font-size: 13px;
+        }
+        
+        .info-panel i {
+            width: 16px;
+            color: #ff7e5f;
+            font-size: 14px;
+        }
+        
+        .close-info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .close-info:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
         
         .gesture-area {
@@ -533,84 +369,51 @@
         
         .watermark {
             position: absolute;
-            bottom: 20px;
-            left: 20px;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.4);
+            bottom: 15px;
+            left: 15px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
             z-index: 10;
         }
         
         /* 响应式调整 */
-        @media (max-width: 768px) {
+        @media (max-width: 480px) {
             .source-dropdown {
-                width: 85%;
-                right: 50%;
-                transform: translateX(50%);
+                width: 140px;
+                right: 10px;
             }
             
             .right-controls {
                 right: 10px;
-                bottom: 80px;
-                gap: 15px;
+                bottom: 70px;
+                gap: 10px;
             }
             
             .control-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 18px;
+                width: 34px;
+                height: 34px;
+                font-size: 14px;
             }
             
             .source-panel {
                 right: 10px;
+                top: 50px;
             }
             
-            .skip-btn {
-                top: 15px;
-                right: 15px;
-                width: 45px;
-                height: 45px;
-                font-size: 18px;
-            }
-        }
-        
-        @media (max-height: 700px) {
-            .source-dropdown {
-                max-height: 60vh;
-            }
-            
-            .source-list-container {
-                max-height: calc(60vh - 140px);
+            .source-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div class="logo">
-                <i class="fas fa-random"></i>
-                <span>随机小姐姐</span>
-            </div>
-            <div class="current-source">
-                <span id="currentSourceName">源1</span>
-            </div>
-        </div>
-        
         <div class="video-container">
-            <video id="videoPlayer" playsinline>
+            <video id="videoPlayer" playsinline autoplay muted>
                 您的浏览器不支持 HTML5 视频标签。
             </video>
-        </div>
-        
-        <div id="loading" class="loading">
-            <i class="fas fa-spinner fa-spin"></i>
-            <span>加载中，请稍候...</span>
-        </div>
-        
-        <div id="errorMessage" class="error-message">
-            <i class="fas fa-exclamation-triangle"></i>
-            <span>视频加载失败</span>
-            <span>请尝试其他视频源</span>
         </div>
         
         <button onclick="nextVideo()" class="skip-btn" title="下一个视频">
@@ -618,7 +421,7 @@
         </button>
         
         <div class="watermark">
-            Echo制作 © 2023
+            Echo制作
         </div>
         
         <!-- 右侧源选择面板 -->
@@ -637,20 +440,17 @@
             </div>
         </div>
         
-        <!-- 源选择下拉菜单 -->
+        <!-- 源选择下拉菜单 - 最小化 -->
         <div class="source-dropdown" id="sourceDropdown">
             <div class="dropdown-header">
-                <span>选择视频源 (32个)</span>
-                <button onclick="toggleSourceDropdown()" style="background: none; border: none; color: white; cursor: pointer;" title="关闭">
+                <span>源</span>
+                <button onclick="toggleSourceDropdown()" style="background: none; border: none; color: white; cursor: pointer; font-size: 12px;" title="关闭">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <input type="text" class="dropdown-search" id="sourceSearch" placeholder="搜索视频源...">
-            <div class="source-list-container">
-                <ul class="source-list" id="sourceList">
-                    <!-- 源列表将通过JavaScript动态生成 -->
-                </ul>
-            </div>
+            <ul class="source-list" id="sourceList">
+                <!-- 源列表将通过JavaScript动态生成 -->
+            </ul>
         </div>
         
         <!-- 右侧控制面板 -->
@@ -692,14 +492,12 @@
             <button class="close-info" onclick="toggleInfo()" title="关闭">
                 <i class="fas fa-times"></i>
             </button>
-            <h3><i class="fas fa-info-circle"></i> Echo制作.使用说明</h3>
-            <p><i class="fas fa-play-circle"></i> 视频将自动加载并全屏播放</p>
-            <p><i class="fas fa-hand-point-up"></i> 向上滑动屏幕切换下一个视频</p>
-            <p><i class="fas fa-pause-circle"></i> 使用右侧控制按钮进行暂停/播放和静音操作</p>
-            <p><i class="fas fa-exchange-alt"></i> 可以在右侧切换不同的视频源</p>
-            <p><i class="fas fa-spinner"></i> 视频加载时会有提示</p>
+            <h3><i class="fas fa-info-circle"></i>Echo制作. 使用说明</h3>
+            <p><i class="fas fa-play-circle"></i> 视频自动播放</p>
+            <p><i class="fas fa-hand-point-up"></i> 上滑屏幕切换视频</p>
+            <p><i class="fas fa-pause-circle"></i> 右侧按钮控制播放</p>
+            <p><i class="fas fa-exchange-alt"></i> 切换不同视频源</p>
             <p><i class="fas fa-heart"></i> 点赞支持喜欢的视频</p>
-            <p><i class="fas fa-forward"></i> 点击右上角按钮跳过当前视频</p>
         </div>
         
         <div class="gesture-area" id="gestureArea"></div>
@@ -708,8 +506,6 @@
     <script>
         // 获取DOM元素
         const videoPlayer = document.getElementById('videoPlayer');
-        const loading = document.getElementById('loading');
-        const errorMessage = document.getElementById('errorMessage');
         const playPauseBtn = document.getElementById('playPauseBtn');
         const muteBtn = document.getElementById('muteBtn');
         const likeBtn = document.getElementById('likeBtn');
@@ -719,43 +515,41 @@
         const infoPanel = document.getElementById('infoPanel');
         const sourceDropdown = document.getElementById('sourceDropdown');
         const sourceList = document.getElementById('sourceList');
-        const sourceSearch = document.getElementById('sourceSearch');
-        const currentSourceName = document.getElementById('currentSourceName');
         
         // 视频源列表 - 包含32个接口
         const videoSources = [
-            { url: "http://v.nrzj.vip/video.php", name: "源1", desc: "nrzj.vip" },
-            { url: "http://av.npcq.cn/api.php", name: "源2", desc: "npcq.cn" },
-            { url: "https://188sp.711888.xyz/188/video.php", name: "源3", desc: "188sp" },
-            { url: "https://v.nrzj.vip/video.php", name: "源4", desc: "nrzj" },
-            { url: "https://www.cunshao.com/666666/api/pc.php", name: "源5", desc: "cunshao PC" },
-            { url: "https://www.cunshao.com/666666/api/web.php", name: "源6", desc: "cunshao Web" },
-            { url: "https://api.dwo.cc/api/video?v=xd", name: "源7", desc: "dwo XD" },
-            { url: "https://api.dwo.cc/api/ksvideo", name: "源8", desc: "dwo KS" },
-            { url: "https://api.suyanw.cn/api/xjj/api.php", name: "源9", desc: "suyanw XJJ" },
-            { url: "https://api.suyanw.cn/api/kysp.php?lx=女神", name: "源10", desc: "suyanw 女神" },
-            { url: "https://api.yujn.cn/api/zzxjj.php?type=video", name: "源11", desc: "yujn ZZXJJ" },
-            { url: "https://api.yujn.cn/api/xjj.php?type=video", name: "源12", desc: "yujn XJJ" },
-            { url: "https://api.yujn.cn/api/duilian.php?type=video", name: "源13", desc: "yujn 对联" },
-            { url: "https://api.yujn.cn/api/nvda.php?type=video", name: "源14", desc: "yujn 女大" },
-            { url: "https://api.yujn.cn/api/heisis.php?type=video", name: "源15", desc: "yujn 黑丝" },
-            { url: "https://api.yujn.cn/api/baisis.php?type=video", name: "源16", desc: "yujn 白丝" },
-            { url: "https://api.yujn.cn/api/manzhan.php?type=video", name: "源17", desc: "yujn 满站" },
-            { url: "https://api.yujn.cn/api/juhexjj.php?type=video", name: "源18", desc: "yujn 聚合XJJ" },
-            { url: "https://api.yujn.cn/api/chuanda.php?type=video", name: "源19", desc: "yujn 穿搭" },
-            { url: "https://api.yujn.cn/api/shwd.php?type=video", name: "源20", desc: "yujn 户外" },
-            { url: "https://api.yujn.cn/api/wmsc.php?type=video", name: "源21", desc: "yujn 外卖" },
-            { url: "https://api.yujn.cn/api/hanfu.php?type=video", name: "源22", desc: "yujn 汉服" },
-            { url: "https://api.yujn.cn/api/manyao.php?type=video", name: "源23", desc: "yujn 漫摇" },
-            { url: "https://api.yujn.cn/api/qingchun.php?type=video", name: "源24", desc: "yujn 青春" },
-            { url: "https://api.yujn.cn/api/COS.php?type=video", name: "源25", desc: "yujn COS" },
-            { url: "https://api.yujn.cn/api/nvgao.php?type=video", name: "源26", desc: "yujn 女高" },
-            { url: "https://api.yujn.cn/api/jiepai.php?type=video", name: "源27", desc: "yujn 街拍" },
-            { url: "https://api.yujn.cn/api/ndym.php?type=video", name: "源28", desc: "yujn 女大" },
-            { url: "https://api.yujn.cn/api/tianmei.php?type=video", name: "源29", desc: "yujn 甜美" },
-            { url: "https://api.yujn.cn/api/rewu.php?type=video", name: "源30", desc: "yujn 热舞" },
-            { url: "https://api.yujn.cn/api/ksxjjsp.php", name: "源31", desc: "yujn KSXJJ" },
-            { url: "https://api.cnmpp.com/sj/?type=json", name: "源32", desc: "cnmpp" }
+            { url: "http://v.nrzj.vip/video.php", name: "源1" },
+            { url: "http://av.npcq.cn/api.php", name: "源2" },
+            { url: "https://188sp.711888.xyz/188/video.php", name: "源3" },
+            { url: "https://v.nrzj.vip/video.php", name: "源4" },
+            { url: "https://www.cunshao.com/666666/api/pc.php", name: "源5" },
+            { url: "https://www.cunshao.com/666666/api/web.php", name: "源6" },
+            { url: "https://api.dwo.cc/api/video?v=xd", name: "源7" },
+            { url: "https://api.dwo.cc/api/ksvideo", name: "源8" },
+            { url: "https://api.suyanw.cn/api/xjj/api.php", name: "源9" },
+            { url: "https://api.suyanw.cn/api/kysp.php?lx=女神", name: "源10" },
+            { url: "https://api.yujn.cn/api/zzxjj.php?type=video", name: "源11" },
+            { url: "https://api.yujn.cn/api/xjj.php?type=video", name: "源12" },
+            { url: "https://api.yujn.cn/api/duilian.php?type=video", name: "源13" },
+            { url: "https://api.yujn.cn/api/nvda.php?type=video", name: "源14" },
+            { url: "https://api.yujn.cn/api/heisis.php?type=video", name: "源15" },
+            { url: "https://api.yujn.cn/api/baisis.php?type=video", name: "源16" },
+            { url: "https://api.yujn.cn/api/manzhan.php?type=video", name: "源17" },
+            { url: "https://api.yujn.cn/api/juhexjj.php?type=video", name: "源18" },
+            { url: "https://api.yujn.cn/api/chuanda.php?type=video", name: "源19" },
+            { url: "https://api.yujn.cn/api/shwd.php?type=video", name: "源20" },
+            { url: "https://api.yujn.cn/api/wmsc.php?type=video", name: "源21" },
+            { url: "https://api.yujn.cn/api/hanfu.php?type=video", name: "源22" },
+            { url: "https://api.yujn.cn/api/manyao.php?type=video", name: "源23" },
+            { url: "https://api.yujn.cn/api/qingchun.php?type=video", name: "源24" },
+            { url: "https://api.yujn.cn/api/COS.php?type=video", name: "源25" },
+            { url: "https://api.yujn.cn/api/nvgao.php?type=video", name: "源26" },
+            { url: "https://api.yujn.cn/api/jiepai.php?type=video", name: "源27" },
+            { url: "https://api.yujn.cn/api/ndym.php?type=video", name: "源28" },
+            { url: "https://api.yujn.cn/api/tianmei.php?type=video", name: "源29" },
+            { url: "https://api.yujn.cn/api/rewu.php?type=video", name: "源30" },
+            { url: "https://api.yujn.cn/api/ksxjjsp.php", name: "源31" },
+            { url: "https://api.cnmpp.com/sj/?type=json", name: "源32" }
         ];
         
         // 图标列表
@@ -786,13 +580,13 @@
 
         // 阻止页面滚动，但允许源列表滚动
         document.addEventListener('touchmove', function(e) {
-            if (e.target.closest('.source-list-container')) {
+            if (e.target.closest('.source-dropdown')) {
                 return;
             }
             e.preventDefault();
         }, { passive: false });
         
-        // 初始化源列表
+        // 初始化源列表 - 最小化
         function initSourceList() {
             sourceList.innerHTML = '';
             videoSources.forEach((source, index) => {
@@ -803,10 +597,7 @@
                     <div class="source-icon">
                         <i class="fas ${sourceIcons[iconIndex]}"></i>
                     </div>
-                    <div class="source-info">
-                        <div class="source-name">${source.name}</div>
-                        <div class="source-desc">${source.desc}</div>
-                    </div>
+                    <div class="source-name">${source.name}</div>
                 `;
                 
                 li.addEventListener('click', () => {
@@ -822,38 +613,13 @@
             });
         }
         
-        // 搜索源
-        sourceSearch.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const items = sourceList.getElementsByTagName('li');
-            
-            for (let i = 0; i < items.length; i++) {
-                const text = items[i].textContent.toLowerCase();
-                if (text.includes(searchTerm)) {
-                    items[i].style.display = 'flex';
-                } else {
-                    items[i].style.display = 'none';
-                }
-            }
-        });
-        
         // 切换源下拉菜单
         function toggleSourceDropdown() {
             if (sourceDropdown.style.display === 'block') {
                 sourceDropdown.style.display = 'none';
             } else {
                 sourceDropdown.style.display = 'block';
-                sourceSearch.value = '';
                 initSourceList();
-                
-                const items = sourceList.getElementsByTagName('li');
-                for (let i = 0; i < items.length; i++) {
-                    items[i].style.display = 'flex';
-                }
-                
-                setTimeout(() => {
-                    sourceSearch.focus();
-                }, 100);
             }
         }
         
@@ -864,67 +630,15 @@
             }
         });
         
-        // 显示错误信息
-        function showError() {
-            errorMessage.style.display = 'flex';
-            setTimeout(() => {
-                errorMessage.style.display = 'none';
-            }, 3000);
-        }
-        
         // 加载视频
-        async function loadVideo(sourceUrl) {
-            try {
-                // 显示加载状态
-                loading.style.display = 'flex';
-                errorMessage.style.display = 'none';
-                videoPlayer.style.display = 'none';
-                
-                // 创建临时video元素测试URL
-                const testVideo = document.createElement('video');
-                testVideo.src = sourceUrl;
-                
-                // 设置超时
-                const timeoutPromise = new Promise((_, reject) => 
-                    setTimeout(() => reject(new Error('加载超时')), 10000)
-                );
-                
-                // 等待视频元数据加载
-                const loadPromise = new Promise((resolve, reject) => {
-                    testVideo.addEventListener('loadedmetadata', resolve);
-                    testVideo.addEventListener('error', reject);
-                });
-                
-                await Promise.race([loadPromise, timeoutPromise]);
-                
-                // 设置实际视频源
-                videoPlayer.src = sourceUrl;
-                videoPlayer.load();
-                
-                // 监听视频加载成功
-                videoPlayer.addEventListener('loadeddata', function onVideoLoaded() {
-                    loading.style.display = 'none';
-                    videoPlayer.style.display = 'block';
-                    retryCount = 0;
-                    
-                    // 尝试自动播放
-                    videoPlayer.play().catch(e => {
-                        console.log('自动播放被阻止，请手动播放');
-                    });
-                    
-                    videoPlayer.removeEventListener('loadeddata', onVideoLoaded);
-                });
-                
-                // 监听视频加载错误
-                videoPlayer.addEventListener('error', function onVideoError() {
-                    loading.style.display = 'none';
-                    handleVideoError();
-                    videoPlayer.removeEventListener('error', onVideoError);
-                });
-                
-            } catch (error) {
-                handleVideoError();
-            }
+        function loadVideo(sourceUrl) {
+            videoPlayer.src = sourceUrl;
+            videoPlayer.load();
+            
+            // 尝试自动播放
+            videoPlayer.play().catch(e => {
+                console.log('自动播放被阻止，请手动播放');
+            });
         }
         
         // 切换到下一个视频
@@ -932,23 +646,6 @@
             const sourceUrl = videoSources[currentSourceIndex].url;
             loadVideo(sourceUrl);
         };
-        
-        // 处理视频错误
-        function handleVideoError() {
-            loading.style.display = 'none';
-            showError();
-            retryCount++;
-            
-            if (retryCount <= maxRetries) {
-                // 重试当前源
-                setTimeout(() => {
-                    nextVideo();
-                }, 1500);
-            } else {
-                // 重试次数用完，重置计数
-                retryCount = 0;
-            }
-        }
         
         // 播放/暂停切换
         function playPause() {
@@ -982,16 +679,6 @@
                 likeBtn.innerHTML = '<i class="far fa-heart"></i>';
             }
             likeCount.textContent = likes;
-            
-            // 添加动画效果
-            likeBtn.animate([
-                { transform: 'scale(1)', opacity: 1 },
-                { transform: 'scale(1.3)', opacity: 0.7 },
-                { transform: 'scale(1)', opacity: 1 }
-            ], {
-                duration: 300,
-                iterations: 1
-            });
         }
         
         // 视频结束时自动播放下一个
@@ -1000,19 +687,10 @@
         // 切换视频源
         function switchSource(index) {
             currentSourceIndex = index;
-            retryCount = 0;
             
             // 更新按钮状态
-            sourceBtns.forEach((btn, i) => {
-                if (i === 0) {
-                    btn.classList.toggle('active', index === 0);
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-            
-            // 更新当前源名称
-            currentSourceName.textContent = videoSources[index].name;
+            sourceBtns.forEach(btn => btn.classList.remove('active'));
+            sourceBtns[0].classList.add('active');
             
             // 重新加载视频
             nextVideo();
@@ -1069,9 +747,6 @@
         // 初始化加载第一个视频
         initSourceList();
         nextVideo();
-        
-        // 初始更新源名称
-        currentSourceName.textContent = videoSources[0].name;
     </script>
 </body>
 </html>
