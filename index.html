@@ -4,56 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>随机小姐姐</title>
-    <!-- ========== 修复图标路径 - 使用相对路径 ========== -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="manifest" href="site.webmanifest">
-    <meta name="theme-color" content="#3498db">
-    <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png"><link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: #000;
             color: #fff;
             height: 100vh;
             overflow: hidden;
-            position: fixed;
-            width: 100%;
-            height: 100%;
         }
         
-        .player-container {
+        .container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
             background: #000;
-            z-index: 1;
+            flex-grow: 1;
         }
         
         #videoPlayer {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        }
-        
-        /* 隐藏所有浏览器视频控件 */
-        #videoPlayer::-webkit-media-controls {
-            display: none !important;
         }
         
         .loading {
@@ -70,6 +59,24 @@
             z-index: 10;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .error-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 0, 0, 0.8);
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 12px;
+            display: none;
+            font-size: 16px;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            max-width: 80%;
         }
         
         .skip-btn {
@@ -247,7 +254,7 @@
         .source-list-container {
             max-height: calc(70vh - 120px);
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch; /* 启用iOS弹性滚动 */
+            -webkit-overflow-scrolling: touch;
             padding-right: 4px;
         }
         
@@ -446,10 +453,18 @@
     </style>
 </head>
 <body>
-    <div class="player-container">
-        <video id="videoPlayer" autoplay playsinline></video>
+    <div class="container">
+        <div class="video-container">
+            <video id="videoPlayer" controls playsinline>
+                您的浏览器不支持 HTML5 视频标签。
+            </video>
+        </div>
         <div id="loading" class="loading">
             <i class="fas fa-spinner fa-spin"></i> 加载中...
+        </div>
+        <div id="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-triangle"></i> 视频加载失败<br>
+            <small>正在尝试下一个源...</small>
         </div>
         
         <div class="gesture-area" id="gestureArea"></div>
@@ -529,7 +544,7 @@
             <button class="close-info" onclick="toggleInfo()">
                 <i class="fas fa-times"></i>
             </button>
-            <h3><i class="fas fa-info-circle"></i> Echo使用说明</h3>
+            <h3><i class="fas fa-info-circle"></i> Echo制作.使用说明</h3>
             <p><i class="fas fa-play-circle"></i> 视频将自动加载并全屏播放</p>
             <p><i class="fas fa-hand-point-up"></i> 向上滑动屏幕切换下一个视频</p>
             <p><i class="fas fa-pause-circle"></i> 使用右侧控制按钮进行暂停/播放和静音操作</p>
@@ -542,6 +557,7 @@
         // 获取DOM元素
         const videoPlayer = document.getElementById('videoPlayer');
         const loading = document.getElementById('loading');
+        const errorMessage = document.getElementById('errorMessage');
         const playPauseBtn = document.getElementById('playPauseBtn');
         const muteBtn = document.getElementById('muteBtn');
         const likeBtn = document.getElementById('likeBtn');
@@ -552,7 +568,6 @@
         const sourceDropdown = document.getElementById('sourceDropdown');
         const sourceList = document.getElementById('sourceList');
         const sourceSearch = document.getElementById('sourceSearch');
-        const sourceListContainer = document.querySelector('.source-list-container');
         
         // 视频源列表 - 包含32个接口
         const videoSources = [
@@ -566,27 +581,27 @@
             { url: "https://api.dwo.cc/api/ksvideo", name: "源8", desc: "dwo KS" },
             { url: "https://api.suyanw.cn/api/xjj/api.php", name: "源9", desc: "suyanw XJJ" },
             { url: "https://api.suyanw.cn/api/kysp.php?lx=女神", name: "源10", desc: "suyanw 女神" },
-            { url: "http://api.yujn.cn/api/zzxjj.php?type=video", name: "源11", desc: "yujn ZZXJJ" },
-            { url: "http://api.yujn.cn/api/xjj.php?type=video", name: "源12", desc: "yujn XJJ" },
+            { url: "https://api.yujn.cn/api/zzxjj.php?type=video", name: "源11", desc: "yujn ZZXJJ" },
+            { url: "https://api.yujn.cn/api/xjj.php?type=video", name: "源12", desc: "yujn XJJ" },
             { url: "https://api.yujn.cn/api/duilian.php?type=video", name: "源13", desc: "yujn 对联" },
             { url: "https://api.yujn.cn/api/nvda.php?type=video", name: "源14", desc: "yujn 女大" },
-            { url: "http://api.yujn.cn/api/heisis.php?type=video", name: "源15", desc: "yujn 黑丝" },
-            { url: "http://api.yujn.cn/api/baisis.php?type=video", name: "源16", desc: "yujn 白丝" },
+            { url: "https://api.yujn.cn/api/heisis.php?type=video", name: "源15", desc: "yujn 黑丝" },
+            { url: "https://api.yujn.cn/api/baisis.php?type=video", name: "源16", desc: "yujn 白丝" },
             { url: "https://api.yujn.cn/api/manzhan.php?type=video", name: "源17", desc: "yujn 满站" },
-            { url: "http://api.yujn.cn/api/juhexjj.php?type=video", name: "源18", desc: "yujn 聚合XJJ" },
-            { url: "http://api.yujn.cn/api/chuanda.php?type=video", name: "源19", desc: "yujn 穿搭" },
-            { url: "http://api.yujn.cn/api/shwd.php?type=video", name: "源20", desc: "yujn 户外" },
-            { url: "http://api.yujn.cn/api/wmsc.php?type=video", name: "源21", desc: "yujn 外卖" },
-            { url: "http://api.yujn.cn/api/hanfu.php?type=video", name: "源22", desc: "yujn 汉服" },
-            { url: "http://api.yujn.cn/api/manyao.php?type=video", name: "源23", desc: "yujn 漫摇" },
-            { url: "http://api.yujn.cn/api/qingchun.php?type=video", name: "源24", desc: "yujn 青春" },
-            { url: "http://api.yujn.cn/api/COS.php?type=video", name: "源25", desc: "yujn COS" },
-            { url: "http://api.yujn.cn/api/nvgao.php?type=video", name: "源26", desc: "yujn 女高" },
-            { url: "http://api.yujn.cn/api/jiepai.php?type=video", name: "源27", desc: "yujn 街拍" },
-            { url: "http://api.yujn.cn/api/ndym.php?type=video", name: "源28", desc: "yujn 女大" },
-            { url: "http://api.yujn.cn/api/tianmei.php?type=video", name: "源29", desc: "yujn 甜美" },
-            { url: "http://api.yujn.cn/api/rewu.php?type=video", name: "源30", desc: "yujn 热舞" },
-            { url: "http://api.yujn.cn/api/ksxjjsp.php", name: "源31", desc: "yujn KSXJJ" },
+            { url: "https://api.yujn.cn/api/juhexjj.php?type=video", name: "源18", desc: "yujn 聚合XJJ" },
+            { url: "https://api.yujn.cn/api/chuanda.php?type=video", name: "源19", desc: "yujn 穿搭" },
+            { url: "https://api.yujn.cn/api/shwd.php?type=video", name: "源20", desc: "yujn 户外" },
+            { url: "https://api.yujn.cn/api/wmsc.php?type=video", name: "源21", desc: "yujn 外卖" },
+            { url: "https://api.yujn.cn/api/hanfu.php?type=video", name: "源22", desc: "yujn 汉服" },
+            { url: "https://api.yujn.cn/api/manyao.php?type=video", name: "源23", desc: "yujn 漫摇" },
+            { url: "https://api.yujn.cn/api/qingchun.php?type=video", name: "源24", desc: "yujn 青春" },
+            { url: "https://api.yujn.cn/api/COS.php?type=video", name: "源25", desc: "yujn COS" },
+            { url: "https://api.yujn.cn/api/nvgao.php?type=video", name: "源26", desc: "yujn 女高" },
+            { url: "https://api.yujn.cn/api/jiepai.php?type=video", name: "源27", desc: "yujn 街拍" },
+            { url: "https://api.yujn.cn/api/ndym.php?type=video", name: "源28", desc: "yujn 女大" },
+            { url: "https://api.yujn.cn/api/tianmei.php?type=video", name: "源29", desc: "yujn 甜美" },
+            { url: "https://api.yujn.cn/api/rewu.php?type=video", name: "源30", desc: "yujn 热舞" },
+            { url: "https://api.yujn.cn/api/ksxjjsp.php", name: "源31", desc: "yujn KSXJJ" },
             { url: "https://api.cnmpp.com/sj/?type=json", name: "源32", desc: "cnmpp" }
         ];
         
@@ -604,6 +619,8 @@
         
         // 当前使用的视频源索引
         let currentSourceIndex = 0;
+        let retryCount = 0;
+        const maxRetries = 3;
         
         // 点赞计数
         let likes = 0;
@@ -616,7 +633,6 @@
 
         // 阻止页面滚动，但允许源列表滚动
         document.addEventListener('touchmove', function(e) {
-            // 如果触摸点在源列表容器内，允许滚动
             if (e.target.closest('.source-list-container')) {
                 return;
             }
@@ -677,13 +693,11 @@
                 sourceSearch.value = '';
                 initSourceList();
                 
-                // 重置所有列表项的显示
                 const items = sourceList.getElementsByTagName('li');
                 for (let i = 0; i < items.length; i++) {
                     items[i].style.display = 'flex';
                 }
                 
-                // 聚焦搜索框
                 setTimeout(() => {
                     sourceSearch.focus();
                 }, 100);
@@ -697,27 +711,129 @@
             }
         });
         
-        // 视频加载开始时的处理
-        videoPlayer.onloadstart = videoPlayer.onwaiting = function() {
-            loading.style.display = 'block';
-        };
+        // 显示错误信息
+        function showError(message) {
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 3000);
+        }
         
-        // 视频可以播放时的处理
-        videoPlayer.oncanplay = videoPlayer.onplaying = function() {
-            loading.style.display = 'none';
-        };
+        // 智能视频加载函数
+        async function loadVideoIntelligently(sourceUrl) {
+            try {
+                // 首先尝试直接作为视频源播放
+                const directVideoPromise = new Promise((resolve, reject) => {
+                    const tempVideo = document.createElement('video');
+                    tempVideo.src = sourceUrl;
+                    tempVideo.addEventListener('loadeddata', () => resolve({ type: 'direct', url: sourceUrl }));
+                    tempVideo.addEventListener('error', () => reject(new Error('不是直接视频流')));
+                    // 设置超时
+                    setTimeout(() => reject(new Error('超时')), 5000);
+                });
+                
+                return await directVideoPromise;
+            } catch (directError) {
+                // 如果不是直接视频流，尝试作为API获取视频URL
+                try {
+                    const response = await fetch(sourceUrl);
+                    const data = await response.json();
+                    
+                    // 尝试从常见的JSON格式中提取视频URL
+                    let videoUrl = null;
+                    
+                    if (data.url) {
+                        videoUrl = data.url;
+                    } else if (data.video_url) {
+                        videoUrl = data.video_url;
+                    } else if (data.data && data.data.url) {
+                        videoUrl = data.data.url;
+                    } else if (data.mp4) {
+                        videoUrl = data.mp4;
+                    } else if (Array.isArray(data) && data[0] && data[0].url) {
+                        videoUrl = data[0].url;
+                    }
+                    
+                    if (videoUrl) {
+                        return { type: 'api', url: videoUrl };
+                    } else {
+                        throw new Error('无法从API响应中提取视频URL');
+                    }
+                } catch (apiError) {
+                    throw new Error('既不是直接视频流也不是有效的API');
+                }
+            }
+        }
         
         // 切换到下一个视频
-        window.nextVideo = function() {
+        window.nextVideo = async function() {
             const sourceUrl = videoSources[currentSourceIndex].url;
-            videoPlayer.src = sourceUrl + "?t=" + Date.now();
-            videoPlayer.play();
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            
+            // 显示加载状态
+            loading.style.display = 'block';
+            errorMessage.style.display = 'none';
+            videoPlayer.style.display = 'none';
+            
+            try {
+                // 智能加载视频
+                const result = await loadVideoIntelligently(sourceUrl);
+                
+                // 设置视频源
+                videoPlayer.src = result.url;
+                
+                // 加载视频
+                videoPlayer.load();
+                
+                // 监听视频加载成功
+                videoPlayer.addEventListener('loadeddata', function onVideoLoaded() {
+                    loading.style.display = 'none';
+                    videoPlayer.style.display = 'block';
+                    retryCount = 0;
+                    
+                    // 尝试自动播放
+                    videoPlayer.play().catch(e => {
+                        console.log('自动播放被阻止，请手动播放');
+                    });
+                    
+                    videoPlayer.removeEventListener('loadeddata', onVideoLoaded);
+                });
+                
+                // 监听视频加载错误
+                videoPlayer.addEventListener('error', function onVideoError() {
+                    loading.style.display = 'none';
+                    handleVideoError('视频加载失败');
+                    videoPlayer.removeEventListener('error', onVideoError);
+                });
+                
+            } catch (error) {
+                handleVideoError(error.message);
+            }
             
             // 重置点赞状态
             isLiked = false;
             likeBtn.innerHTML = '<i class="far fa-heart"></i>';
         };
+        
+        // 处理视频错误
+        function handleVideoError(error) {
+            loading.style.display = 'none';
+            showError(error);
+            
+            retryCount++;
+            if (retryCount <= maxRetries) {
+                // 重试当前源
+                setTimeout(() => {
+                    nextVideo();
+                }, 1000);
+            } else {
+                // 重试次数用完，切换到下一个源
+                retryCount = 0;
+                setTimeout(() => {
+                    currentSourceIndex = (currentSourceIndex + 1) % videoSources.length;
+                    nextVideo();
+                }, 1000);
+            }
+        }
         
         // 播放/暂停切换
         function playPause() {
@@ -759,6 +875,7 @@
         // 切换视频源
         function switchSource(index) {
             currentSourceIndex = index;
+            retryCount = 0;
             
             // 更新按钮状态
             sourceBtns.forEach((btn, i) => {
@@ -800,7 +917,6 @@
             
             const diffY = startY - endY;
             
-            // 如果向上滑动距离超过80px，则切换视频
             if (diffY > 80) {
                 nextVideo();
             }
