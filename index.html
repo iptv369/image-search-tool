@@ -106,6 +106,7 @@
             align-items: center;
             gap: 16px;
             z-index: 10;
+            transition: opacity 0.3s ease;
         }
         
         .control-btn {
@@ -158,6 +159,7 @@
             flex-direction: column;
             gap: 10px;
             z-index: 10;
+            transition: opacity 0.3s ease;
         }
         
         .source-btn {
@@ -220,6 +222,7 @@
             max-height: 65vh;
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s ease;
         }
         
         .dropdown-header {
@@ -343,6 +346,7 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             display: none;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s ease;
         }
         
         .info-panel h3 {
@@ -409,6 +413,58 @@
             color: rgba(255, 255, 255, 0.35);
             z-index: 10;
             font-weight: 300;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* 隐藏控制按钮 */
+        .hide-controls .skip-btn,
+        .hide-controls .watermark,
+        .hide-controls .source-panel,
+        .hide-controls .source-dropdown,
+        .hide-controls .right-controls,
+        .hide-controls .info-btn,
+        .hide-controls .info-panel {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* 底部控制按钮 - 精简版 */
+        .bottom-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 10;
+            transition: opacity 0.3s ease;
+        }
+        
+        .toggle-controls-btn {
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-controls-btn:hover {
+            background: rgba(255, 126, 95, 0.4);
+            transform: scale(1.05);
+        }
+        
+        .toggle-controls-btn:active {
+            transform: scale(0.95);
         }
         
         /* 响应式调整 */
@@ -456,6 +512,16 @@
                 height: 38px;
                 font-size: 15px;
             }
+            
+            .bottom-controls {
+                bottom: 15px;
+            }
+            
+            .toggle-controls-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
         }
         
         /* 竖屏优化 */
@@ -478,7 +544,7 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="container">
         <div class="video-container">
             <video id="videoPlayer" playsinline autoplay muted>
                 您的浏览器不支持 HTML5 视频标签。
@@ -578,6 +644,14 @@
             <p><i class="fas fa-exchange-alt"></i> 切换不同视频源</p>
             <p><i class="fas fa-heart"></i> 点赞支持喜欢的视频</p>
             <p><i class="fas fa-sync-alt"></i> 自动播放开关</p>
+            <p><i class="fas fa-eye"></i> 底部按钮隐藏/显示控制</p>
+        </div>
+        
+        <!-- 底部控制按钮 - 精简版 -->
+        <div class="bottom-controls">
+            <button class="toggle-controls-btn" onclick="toggleControls()" title="隐藏/显示控制">
+                <i class="fas fa-eye"></i>
+            </button>
         </div>
         
         <div class="gesture-area" id="gestureArea"></div>
@@ -596,6 +670,8 @@
         const sourceDropdown = document.getElementById('sourceDropdown');
         const sourceList = document.getElementById('sourceList');
         const autoPlayBtn = document.getElementById('autoPlayBtn');
+        const container = document.getElementById('container');
+        const toggleControlsBtn = document.querySelector('.toggle-controls-btn');
         
         // 视频源列表 - 包含32个接口
         const videoSources = [
@@ -656,6 +732,9 @@
         
         // 自动播放状态
         let autoPlayEnabled = true;
+        
+        // 控制按钮可见状态
+        let controlsVisible = true;
         
         // 手势控制相关变量
         let startY = 0;
@@ -796,6 +875,19 @@
             });
         }
         
+        // 切换控制按钮可见性
+        function toggleControls() {
+            controlsVisible = !controlsVisible;
+            
+            if (controlsVisible) {
+                container.classList.remove('hide-controls');
+                toggleControlsBtn.innerHTML = '<i class="fas fa-eye"></i>';
+            } else {
+                container.classList.add('hide-controls');
+                toggleControlsBtn.innerHTML = '<i class="fas fa-eye-slash"></i>';
+            }
+        }
+        
         // 视频结束时处理
         videoPlayer.onended = function() {
             if (autoPlayEnabled) {
@@ -862,6 +954,8 @@
                 toggleLike();
             } else if (e.code === 'KeyA') {
                 toggleAutoPlay();
+            } else if (e.code === 'KeyH') {
+                toggleControls();
             }
         });
         
