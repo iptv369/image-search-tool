@@ -6,7 +6,7 @@
     <title>随机小姐姐</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- ========== 修复图标路径 - 使用相对路径 ========== -->
+    <!-- ========== 修复图标路径 - 使用相对路径 ========== -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
@@ -480,7 +480,7 @@
 <body>
     <div class="container">
         <div class="video-container">
-            <video id="videoPlayer" playsinline autoplay muted loop>
+            <video id="videoPlayer" playsinline autoplay muted>
                 您的浏览器不支持 HTML5 视频标签。
             </video>
         </div>
@@ -547,6 +547,14 @@
                 <div class="control-label">音量</div>
             </div>
             
+            <!-- 自动播放按钮 - 无文字 -->
+            <div class="control-item">
+                <button onclick="toggleAutoPlay()" class="control-btn" id="autoPlayBtn" title="自动播放">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <div class="control-label"></div> <!-- 空标签，不显示文字 -->
+            </div>
+            
             <div class="control-item">
                 <button onclick="nextVideo()" class="control-btn" title="下一个">
                     <i class="fas fa-forward"></i>
@@ -569,6 +577,7 @@
             <p><i class="fas fa-pause-circle"></i> 右侧按钮控制播放</p>
             <p><i class="fas fa-exchange-alt"></i> 切换不同视频源</p>
             <p><i class="fas fa-heart"></i> 点赞支持喜欢的视频</p>
+            <p><i class="fas fa-sync-alt"></i> 自动播放开关</p>
         </div>
         
         <div class="gesture-area" id="gestureArea"></div>
@@ -586,6 +595,7 @@
         const infoPanel = document.getElementById('infoPanel');
         const sourceDropdown = document.getElementById('sourceDropdown');
         const sourceList = document.getElementById('sourceList');
+        const autoPlayBtn = document.getElementById('autoPlayBtn');
         
         // 视频源列表 - 包含32个接口
         const videoSources = [
@@ -643,6 +653,9 @@
         // 点赞计数
         let likes = 0;
         let isLiked = false;
+        
+        // 自动播放状态
+        let autoPlayEnabled = true;
         
         // 手势控制相关变量
         let startY = 0;
@@ -762,8 +775,33 @@
             });
         }
         
-        // 视频结束时自动播放下一个
-        videoPlayer.onended = nextVideo;
+        // 切换自动播放状态
+        function toggleAutoPlay() {
+            autoPlayEnabled = !autoPlayEnabled;
+            
+            if (autoPlayEnabled) {
+                autoPlayBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+            } else {
+                autoPlayBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
+            }
+            
+            // 添加动画效果
+            autoPlayBtn.animate([
+                { transform: 'rotate(0deg)' },
+                { transform: 'rotate(360deg)' },
+                { transform: 'rotate(0deg)' }
+            ], {
+                duration: 500,
+                iterations: 1
+            });
+        }
+        
+        // 视频结束时处理
+        videoPlayer.onended = function() {
+            if (autoPlayEnabled) {
+                nextVideo();
+            }
+        };
         
         // 切换视频源
         function switchSource(index) {
@@ -822,12 +860,10 @@
                 toggleMute();
             } else if (e.code === 'KeyL') {
                 toggleLike();
+            } else if (e.code === 'KeyA') {
+                toggleAutoPlay();
             }
         });
-        
-        // 初始化加载第一个视频
-        initSourceList();
-        nextVideo();
         
         // 添加双击全屏功能
         videoPlayer.addEventListener('dblclick', function() {
@@ -839,6 +875,10 @@
                 });
             }
         });
+        
+        // 初始化加载第一个视频
+        initSourceList();
+        nextVideo();
     </script>
 </body>
 </html>
