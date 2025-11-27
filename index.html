@@ -6,7 +6,7 @@
     <title>随机小姐姐</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- ========== 修复图标路径 - 使用相对路径 ========== -->
+  <!-- ========== 修复图标路径 - 使用相对路径 ========== -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
@@ -14,8 +14,7 @@
     <link rel="manifest" href="site.webmanifest">
     <meta name="theme-color" content="#3498db">
     <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png"><link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
     <style>
         * {
             margin: 0;
@@ -467,6 +466,26 @@
             transform: scale(0.95);
         }
         
+        /* 加载指示器 */
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ff7e5f;
+            animation: spin 1s linear infinite;
+            z-index: 5;
+            display: none;
+        }
+        
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
         /* 响应式调整 */
         @media (max-width: 480px) {
             .source-dropdown {
@@ -549,6 +568,7 @@
             <video id="videoPlayer" playsinline autoplay muted>
                 您的浏览器不支持 HTML5 视频标签。
             </video>
+            <div class="loading-indicator" id="loadingIndicator"></div>
         </div>
         
         <button onclick="nextVideo()" class="skip-btn" title="下一个视频">
@@ -645,6 +665,7 @@
             <p><i class="fas fa-heart"></i> 点赞支持喜欢的视频</p>
             <p><i class="fas fa-sync-alt"></i> 自动播放开关</p>
             <p><i class="fas fa-eye"></i> 底部按钮隐藏/显示控制</p>
+            <p><i class="fas fa-sync"></i> 失效视频自动跳过</p>
         </div>
         
         <!-- 底部控制按钮 - 精简版 -->
@@ -672,6 +693,7 @@
         const autoPlayBtn = document.getElementById('autoPlayBtn');
         const container = document.getElementById('container');
         const toggleControlsBtn = document.querySelector('.toggle-controls-btn');
+        const loadingIndicator = document.getElementById('loadingIndicator');
         
         // 视频源列表 - 包含32个接口
         const videoSources = [
@@ -740,6 +762,9 @@
         let startY = 0;
         let endY = 0;
         let isSwiping = false;
+        
+        // 视频加载状态
+        let isLoading = false;
 
         // 阻止页面滚动，但允许源列表滚动
         document.addEventListener('touchmove', function(e) {
@@ -795,12 +820,18 @@
         
         // 加载视频
         function loadVideo(sourceUrl) {
+            // 显示加载指示器
+            loadingIndicator.style.display = 'block';
+            isLoading = true;
+            
+            // 设置视频源
             videoPlayer.src = sourceUrl;
             videoPlayer.load();
             
             // 尝试自动播放
             videoPlayer.play().catch(e => {
                 console.log('自动播放被阻止，请手动播放');
+                // 即使自动播放被阻止，也不显示错误
             });
         }
         
@@ -893,6 +924,21 @@
             if (autoPlayEnabled) {
                 nextVideo();
             }
+        };
+        
+        // 视频加载错误处理 - 静默跳过失效视频
+        videoPlayer.onerror = function() {
+            // 静默跳过失效视频
+            setTimeout(() => {
+                nextVideo();
+            }, 300); // 短暂延迟避免过快切换
+        };
+        
+        // 视频加载成功处理
+        videoPlayer.onloadeddata = function() {
+            // 隐藏加载指示器
+            loadingIndicator.style.display = 'none';
+            isLoading = false;
         };
         
         // 切换视频源
